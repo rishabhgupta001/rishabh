@@ -9,20 +9,27 @@
         android:id="@+id/delivery_frag"
         android:name="com.example.delieverydemo.delievery.view.DeliveryFragment"
         android:label="@string/text_my_deliveries"
-        tools:layout="@layout/fragment_delivery" />
+        tools:layout="@layout/fragment_delivery">
 
-    <action
-        android:id="@+id/action_delivery_detail"
-        app:destination="@id/delivery_detail_frag"
-        app:enterAnim="@anim/slide_in_left"
-        app:exitAnim="@anim/slide_out_left"
-        app:popEnterAnim="@anim/slide_in_right"
-        app:popExitAnim="@anim/slide_out_right" />
+        <action
+            android:id="@+id/action_delivery_detail"
+            app:destination="@id/delivery_detail_frag"
+            app:enterAnim="@anim/slide_in_left"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_right"
+            app:popExitAnim="@anim/slide_out_right" />
+    </fragment>
 
     <fragment
         android:id="@+id/delivery_detail_frag"
         android:name="com.example.delieverydemo.delievery.view.DeliveryDetailFragment"
         android:label="@string/text_delivery_details"
-        tools:layout="@layout/fragment_delivery_detail" />
+        tools:layout="@layout/fragment_delivery_detail">
+        <argument
+            android:name="DeliveryResponseModel"
+            android:defaultValue="@null"
+            app:argType="com.example.delieverydemo.delievery.model.DeliveryResponseModel"
+            app:nullable="true" />
+    </fragment>
 
 </navigation>

@@ -1,6 +1,7 @@
 package com.example.delieverydemo.delievery.model
 
 import com.example.delieverydemo.api.StatusCode
+import java.io.Serializable
 
 data class DeliveryResponseModel(
     val deliveryFee: String = "",
@@ -13,4 +14,4 @@ data class DeliveryResponseModel(
     val surcharge: String = "",
     var status: StatusCode = StatusCode.START,
     var error: String = ""
-)
+) : Serializable

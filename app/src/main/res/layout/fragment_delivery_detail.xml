@@ -3,12 +3,12 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <!-- <data>
+     <data>
 
-         &lt;!&ndash; <variable
+          <variable
               name="data"
-              type="com.sparehub.android.products.model.ProductModel" />&ndash;&gt;
-     </data>-->
+              type="com.example.delieverydemo.delievery.model.DeliveryResponseModel" />
+     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -87,7 +87,7 @@
                             android:layout_marginBottom="@dimen/_10sdp"
                             android:ellipsize="end"
                             android:maxLines="1"
-                            android:text="XXX"
+                            android:text="@{data.route.start}"
                             android:textColor="@color/colorFontDark"
                             android:textSize="@dimen/_12sdp"
                             app:layout_constraintBaseline_toBaselineOf="@+id/from_txt_view"
@@ -105,7 +105,7 @@
                             android:layout_marginBottom="@dimen/_10sdp"
                             android:ellipsize="end"
                             android:maxLines="1"
-                            android:text="XXX"
+                            android:text="@{data.route.end}"
                             android:textColor="@color/colorFontDark"
                             android:textSize="@dimen/_12sdp"
                             app:layout_constraintBaseline_toBaselineOf="@+id/to_txt_view"
@@ -206,7 +206,6 @@
                             android:layout_marginBottom="@dimen/_10sdp"
                             android:ellipsize="end"
                             android:maxLines="1"
-                            android:text="$85"
                             android:textColor="@color/colorFontDark"
                             android:textSize="@dimen/_12sdp"
                             app:layout_constraintEnd_toEndOf="parent"
@@ -282,7 +281,6 @@
             </androidx.constraintlayout.widget.ConstraintLayout>
 
         </androidx.cardview.widget.CardView>
-
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

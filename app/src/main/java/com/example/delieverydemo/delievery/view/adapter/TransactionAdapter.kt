@@ -1,15 +1,18 @@
 package com.example.delieverydemo.delievery.view.adapter
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.os.Handler
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
+import androidx.navigation.Navigation
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.example.delieverydemo.R
 import com.example.delieverydemo.databinding.ItemLayoutTransactionBinding
 import com.example.delieverydemo.delievery.model.DeliveryResponseModel
+import com.example.delieverydemo.delievery.view.DeliveryFragmentDirections
 import com.example.delieverydemo.utils.Constants
 import com.example.delieverydemo.utils.Utils
 
@@ -43,17 +46,20 @@ class TransactionAdapter(val list: ArrayList<DeliveryResponseModel>) :
                 itemView.isEnabled = false
                 Handler().postDelayed({
                     itemView.isEnabled = true
-                    val arguments = Bundle()
-                    it.findNavController().navigate(R.id.action_delivery_detail, arguments)
+
+                    val action = DeliveryFragmentDirections.actionDeliveryDetail()
+                    action.deliveryResponseModel = list[adapterPosition]
+                    Navigation.findNavController(it).navigate(action)
                 }, 100)
             }
         }
 
+        @SuppressLint("SetTextI18n")
         fun bindItem(data: DeliveryResponseModel) {
             binding.data = data
             Utils.setImage(binding.productImageView, data.goodsPicture)
             val price = data.deliveryFee.removePrefix("$").toFloat() + data.surcharge.removePrefix("$").toFloat()
-            binding.priceTxtView.text = price.toString()
+            binding.priceTxtView.text = "$${price}"
         }
     }
 }

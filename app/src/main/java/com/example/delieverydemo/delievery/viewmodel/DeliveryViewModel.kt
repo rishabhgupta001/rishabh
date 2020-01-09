@@ -22,6 +22,8 @@ class DeliveryViewModel(application: Application) : AndroidViewModel(application
     var statusListener: StatusListener? = null
 
 
+
+
     //Hitting Login Api
     @SuppressLint("CheckResult")
     fun getDeliveryList() {
@@ -31,6 +33,8 @@ class DeliveryViewModel(application: Application) : AndroidViewModel(application
             statusListener?.onFailure(MyApplication.mInstance.getString(R.string.text_no_internet_available))
             deliveryResponseData.value = responseModel
         } else {
+
+
             val observable = ApiService.create().getDeliveryList(20, 20)
             compositeDisposable.add(
                 observable.subscribeOn(Schedulers.io())

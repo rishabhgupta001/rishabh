@@ -7,6 +7,10 @@ object Pref {
     private const val PREF_FILE_NAME = "com.example.delieverydemo.pref"
     private const val IS_FIRST_TIME_LAUNCH = "IS_FIRST_TIME_LAUNCH"
 
+    //loader in paging adapter
+    const val TYPE_PROGRESS = 0
+    const val TYPE_ITEM = 1
+
     private lateinit var sharedPreferences: SharedPreferences
 
     private fun getSharedPreferences(context: Context) {

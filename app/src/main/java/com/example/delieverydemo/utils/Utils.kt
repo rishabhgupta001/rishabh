@@ -50,8 +50,8 @@ object Utils {
      */
     fun setImage(imageView: ImageView, imageUrl: String) {
         Glide.with(imageView).load(imageUrl)
-            .placeholder(R.drawable.placeholder_products)
-            .error(R.drawable.ic_launcher_background)
+            .placeholder(R.drawable.ic_launcher_background)
+            .error(R.drawable.placeholder_products)
             .into(imageView)
     }
 

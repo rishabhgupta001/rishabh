@@ -13,5 +13,9 @@
         <item name="colorControlNormal">@android:color/white</item>
     </style>
 
+    <style name="RedAccent" parent="ThemeOverlay.AppCompat.Light">
+        <item name="colorAccent">#FF0000</item>
+    </style>
+
 
 </resources>

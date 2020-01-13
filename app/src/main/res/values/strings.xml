@@ -7,6 +7,7 @@
     <string name="text_to">To:</string>
     <string name="text_dollar_with_amount">$ %s</string>
     <string name="text_no_internet_available">Internet not available</string>
+    <string name="text_something_went_wrong">Something went wrong</string>
 
 
     <!--Delivery Detail Screen-->

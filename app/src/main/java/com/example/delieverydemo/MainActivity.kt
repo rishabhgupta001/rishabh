@@ -51,7 +51,6 @@ class MainActivity : AppCompatActivity() {
                     toolbar.title = getString(R.string.text_delivery_details)
                     // toolbar.title = getString(com.nthrewards.android.R.string.title_otp)
                     toolbar.setNavigationIcon(R.drawable.img_arrow_left_black)
-
                 }
             }
         }

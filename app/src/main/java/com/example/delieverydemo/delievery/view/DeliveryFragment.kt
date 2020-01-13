@@ -1,28 +1,28 @@
 package com.example.delieverydemo.delievery.view
 
 
-import android.annotation.SuppressLint
+import android.graphics.Color
 import android.os.Bundle
-import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.LinearLayout
 import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.delieverydemo.MainActivity
 import com.example.delieverydemo.R
-import com.example.delieverydemo.api.StatusListener
+import com.example.delieverydemo.api.NetworkState
+import com.example.delieverydemo.api.StatusCode
 import com.example.delieverydemo.databinding.FragmentDeliveryBinding
+import com.example.delieverydemo.delievery.datasource.factory.DeliveryDataSourceFactory
 import com.example.delieverydemo.delievery.model.DeliveryResponseModel
 import com.example.delieverydemo.delievery.view.adapter.TransactionAdapter
 import com.example.delieverydemo.delievery.viewmodel.DeliveryViewModel
 import com.example.delieverydemo.utils.hide
-import com.example.delieverydemo.utils.show
 import com.example.delieverydemo.utils.toastShort
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_delivery.*
@@ -36,13 +36,14 @@ import kotlinx.android.synthetic.main.fragment_delivery.*
 ​
  * Created on January 8, 2020
 ​
- * Modified on January 9, 2020
+ * Modified on January 13, 2020
  *
  * */
-class DeliveryFragment : Fragment(), StatusListener {
+class DeliveryFragment : Fragment() {
     private lateinit var binding: FragmentDeliveryBinding
     private lateinit var transactionAdapter: TransactionAdapter
     private var list: ArrayList<DeliveryResponseModel>? = null
+    private lateinit var deliveryDataSourceFactory: DeliveryDataSourceFactory
 
     val viewModel: DeliveryViewModel by lazy {
         ViewModelProviders.of(this).get(DeliveryViewModel::class.java)
@@ -68,62 +69,71 @@ class DeliveryFragment : Fragment(), StatusListener {
 
 
     /**
-     * initalization
+     * initial setUp
      */
     private fun init() {
-        initializeAdapter()
-        observeDeliveryResponse()
-        viewModel.getDeliveryList()
-        viewModel.statusListener = this
+        setUpRecyclerViewData()
+        observeNetworkState()
+        swipeRefresh()
     }
 
     /**
-     * Method to setUp Adapter
+     * initalise recyclerview
      */
-    @SuppressLint("WrongConstant")
-    private fun initializeAdapter() {
+    private fun setUpRecyclerViewData() {
+        deliveryDataSourceFactory =
+            DeliveryDataSourceFactory()
+
+        swipeRefresh.setColorSchemeColors(Color.RED, Color.RED, Color.RED, Color.RED)
         deliveries_recycler_view.layoutManager =
             LinearLayoutManager(context, RecyclerView.VERTICAL, false)
-        list = ArrayList<DeliveryResponseModel>()
-        transactionAdapter = TransactionAdapter(list!!)
-        deliveries_recycler_view.adapter = transactionAdapter
-    }
+        transactionAdapter = TransactionAdapter()
 
-    /**
-     * Method to observe Delivery Response
-     */
-    private fun observeDeliveryResponse() {
-        viewModel.deliveryResponseData.removeObservers(this)
-        viewModel.deliveryResponseData.observe(this, Observer { success ->
-            if (success != null)
-                setUpData(success)
-
-            if (viewModel.deliveryResponseData.value != null)
-                viewModel.deliveryResponseData.value = null
+        viewModel.itemPagedList.observe(this, Observer { data ->
+            transactionAdapter.submitList(data)
+            swipeRefresh.isRefreshing = false
         })
     }
 
     /**
-     * Method to setUp Response data in View
+     * Method to observe status of data loading from web services
      */
-    private fun setUpData(data: ArrayList<DeliveryResponseModel>) {
-        list?.clear()
-        list?.addAll(data)
-        transactionAdapter.notifyDataSetChanged()
+    private fun observeNetworkState() {
+        //get the Network state (on hitting api respone success,error an all..)
+        viewModel.networkState.observe(this, object : Observer<NetworkState> {
+            override fun onChanged(networkState: NetworkState?) {
+                //show loader inside adapter row via Network Status
+                transactionAdapter.setNetworkState(networkState!!)
+                when {
+                    networkState.statusCode == StatusCode.START -> {
+//                        by default progress visibility is gone in xml view
+//                        progressBar.visibility = View.VISIBLE
+                    }
+                    networkState.statusCode == StatusCode.SUCCESS -> {
+                        (activity as MainActivity).progress_bar.hide()
+
+                    }
+                    networkState.statusCode == StatusCode.ERROR -> {
+                        (activity as MainActivity).progress_bar.hide()
+                        context?.toastShort(getString(R.string.text_something_went_wrong))
+                    }
+                }
+            }
+        })
+
+        deliveries_recycler_view.adapter = transactionAdapter
     }
 
-    override fun onStarted() {
-        (activity as MainActivity).progress_bar.show()
+    /**
+     * Method to handle pull to refresh functionality
+     */
+    private fun swipeRefresh(){
+        swipeRefresh.setOnRefreshListener {
+            (activity as MainActivity).progress_bar.hide()
+            viewModel.itemDataSourceFactory.liveNotificationDataSource.getValue()?.invalidate()
+        }
     }
 
-    override fun onSuccess(T: Any) {
-        (activity as MainActivity).progress_bar.hide()
-    }
-
-    override fun onFailure(message: String) {
-        (activity as MainActivity).progress_bar.hide()
-        context?.toastShort(message)
-    }
 
 }
 

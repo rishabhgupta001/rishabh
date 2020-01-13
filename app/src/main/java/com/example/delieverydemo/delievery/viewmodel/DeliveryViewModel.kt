@@ -1,30 +1,43 @@
 package com.example.delieverydemo.delievery.viewmodel
 
-import android.annotation.SuppressLint
 import android.app.Application
-import android.util.Log
 import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.example.delieverydemo.R
-import com.example.delieverydemo.api.ApiService
-import com.example.delieverydemo.api.StatusCode
-import com.example.delieverydemo.api.StatusListener
-import com.example.delieverydemo.application.MyApplication
+import androidx.lifecycle.Transformations
+import androidx.paging.LivePagedListBuilder
+import androidx.paging.PageKeyedDataSource
+import androidx.paging.PagedList
+import com.example.delieverydemo.api.NetworkState
+import com.example.delieverydemo.delievery.datasource.DeliveryDataSouce
+import com.example.delieverydemo.delievery.datasource.factory.DeliveryDataSourceFactory
 import com.example.delieverydemo.delievery.model.DeliveryResponseModel
-import com.example.delieverydemo.utils.Utils
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.schedulers.Schedulers
 
 class DeliveryViewModel(application: Application) : AndroidViewModel(application) {
-    val deliveryResponseData: MutableLiveData<ArrayList<DeliveryResponseModel>> = MutableLiveData()
+    var itemPagedList: LiveData<PagedList<DeliveryResponseModel>> = MutableLiveData<PagedList<DeliveryResponseModel>>()
+    var liveDataSource: LiveData<PageKeyedDataSource<Int, DeliveryResponseModel>> = MutableLiveData<PageKeyedDataSource<Int, DeliveryResponseModel>>()
+    var networkState: LiveData<NetworkState> = MutableLiveData()
+    val itemDataSourceFactory =
+        DeliveryDataSourceFactory()
+
+   /* val deliveryResponseData: MutableLiveData<ArrayList<DeliveryResponseModel>> = MutableLiveData()
     private val compositeDisposable: CompositeDisposable = CompositeDisposable()
-    var statusListener: StatusListener? = null
+    var statusListener: StatusListener? = null*/
 
+    init {
+        liveDataSource = itemDataSourceFactory.itemLiveDataSource
 
+        networkState = Transformations.switchMap(itemDataSourceFactory.liveNotificationDataSource, DeliveryDataSouce::networkState)
 
+        val pagedListConfig = PagedList.Config.Builder()
+            .setEnablePlaceholders(true)
+            .setPageSize(10).build()
 
-    //Hitting Login Api
+        itemPagedList = LivePagedListBuilder(itemDataSourceFactory, pagedListConfig)
+            .build()
+    }
+
+   /* //Hitting Login Api
     @SuppressLint("CheckResult")
     fun getDeliveryList() {
         val responseModel = ArrayList<DeliveryResponseModel>()
@@ -55,13 +68,13 @@ class DeliveryViewModel(application: Application) : AndroidViewModel(application
                     }, {})
             )
         }
-    }
+    }*/
 
-    //This method will be called when this ViewModel is no longer used and will be destroyed.
+  /*  //This method will be called when this ViewModel is no longer used and will be destroyed.
     override fun onCleared() {
         super.onCleared()
         if (!compositeDisposable.isDisposed)
             compositeDisposable.dispose()
-    }
+    }*/
 
 }

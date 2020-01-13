@@ -62,10 +62,9 @@
                 app:layout_constraintTop_toBottomOf="@+id/from_txt_view" />
 
             <!--XXX-->
-
             <TextView
                 android:id="@+id/from_name_txt_view"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/_10sdp"
                 android:layout_marginBottom="@dimen/_10sdp"
@@ -76,15 +75,17 @@
                 android:textSize="@dimen/_12sdp"
                 app:layout_constraintBaseline_toBaselineOf="@+id/from_txt_view"
                 app:layout_constraintBottom_toTopOf="@+id/to_txt_view"
+                app:layout_constraintEnd_toStartOf="@+id/fav_img_lay"
                 app:layout_constraintStart_toEndOf="@+id/from_txt_view"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintVertical_chainStyle="packed" />
 
             <TextView
                 android:id="@+id/to_name_txt_view"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/_10sdp"
+                android:layout_marginEnd="@dimen/_10sdp"
                 android:layout_marginBottom="@dimen/_10sdp"
                 android:ellipsize="end"
                 android:maxLines="1"
@@ -95,6 +96,7 @@
                 app:layout_constraintBottom_toTopOf="@+id/to_txt_view"
                 app:layout_constraintStart_toEndOf="@+id/from_txt_view"
                 app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/price_txt_view"
                 app:layout_constraintVertical_chainStyle="packed" />
 
 

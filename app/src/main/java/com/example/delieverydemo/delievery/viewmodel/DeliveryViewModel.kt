@@ -20,10 +20,6 @@ class DeliveryViewModel(application: Application) : AndroidViewModel(application
     val itemDataSourceFactory =
         DeliveryDataSourceFactory()
 
-   /* val deliveryResponseData: MutableLiveData<ArrayList<DeliveryResponseModel>> = MutableLiveData()
-    private val compositeDisposable: CompositeDisposable = CompositeDisposable()
-    var statusListener: StatusListener? = null*/
-
     init {
         liveDataSource = itemDataSourceFactory.itemLiveDataSource
 
@@ -31,50 +27,9 @@ class DeliveryViewModel(application: Application) : AndroidViewModel(application
 
         val pagedListConfig = PagedList.Config.Builder()
             .setEnablePlaceholders(true)
-            .setPageSize(10).build()
+            .setPageSize(5).build()
 
         itemPagedList = LivePagedListBuilder(itemDataSourceFactory, pagedListConfig)
             .build()
     }
-
-   /* //Hitting Login Api
-    @SuppressLint("CheckResult")
-    fun getDeliveryList() {
-        val responseModel = ArrayList<DeliveryResponseModel>()
-        if (!Utils.isNetworkAvailable(getApplication())) {
-            //responseModel.status = StatusCode.NETWORK_ERROR
-            statusListener?.onFailure(MyApplication.mInstance.getString(R.string.text_no_internet_available))
-            deliveryResponseData.value = responseModel
-        } else {
-
-
-            val observable = ApiService.create().getDeliveryList(20, 20)
-            compositeDisposable.add(
-                observable.subscribeOn(Schedulers.io())
-                    .doOnSubscribe {
-                        statusListener?.onStarted()
-                        deliveryResponseData.setValue(responseModel)
-                    }
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe({ success ->
-                        statusListener?.onSuccess(Any())
-                        deliveryResponseData.setValue(success)
-                    }, { e ->
-                        e.printStackTrace()
-                        Log.e("vvv1", "Error ${e.localizedMessage}")
-                        Log.e("vvv2", "Error ${e.message}")
-                        statusListener?.onFailure(e?.localizedMessage!!)
-                        deliveryResponseData.setValue(responseModel)
-                    }, {})
-            )
-        }
-    }*/
-
-  /*  //This method will be called when this ViewModel is no longer used and will be destroyed.
-    override fun onCleared() {
-        super.onCleared()
-        if (!compositeDisposable.isDisposed)
-            compositeDisposable.dispose()
-    }*/
-
 }

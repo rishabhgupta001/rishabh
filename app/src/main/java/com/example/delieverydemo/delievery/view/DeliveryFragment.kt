@@ -23,6 +23,7 @@ import com.example.delieverydemo.delievery.model.DeliveryResponseModel
 import com.example.delieverydemo.delievery.view.adapter.TransactionAdapter
 import com.example.delieverydemo.delievery.viewmodel.DeliveryViewModel
 import com.example.delieverydemo.utils.hide
+import com.example.delieverydemo.utils.show
 import com.example.delieverydemo.utils.toastShort
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_delivery.*
@@ -129,7 +130,7 @@ class DeliveryFragment : Fragment() {
      */
     private fun swipeRefresh(){
         swipeRefresh.setOnRefreshListener {
-            (activity as MainActivity).progress_bar.hide()
+            (activity as MainActivity).progress_bar.show()
             viewModel.itemDataSourceFactory.liveNotificationDataSource.getValue()?.invalidate()
         }
     }

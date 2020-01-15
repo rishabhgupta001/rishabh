@@ -72,6 +72,10 @@ dependencies {
     implementation "androidx.paging:paging-runtime:2.1.1"
     kapt "androidx.lifecycle:lifecycle-compiler:2.1.0"
 
+    //Kodein Dependency Injection
+    implementation "org.kodein.di:kodein-di-generic-jvm:6.2.1"
+    implementation "org.kodein.di:kodein-di-framework-android-x:6.2.1"
+
 
     // testing
     testImplementation "junit:junit:4.12"

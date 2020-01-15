@@ -27,6 +27,9 @@ import com.example.delieverydemo.utils.show
 import com.example.delieverydemo.utils.toastShort
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_delivery.*
+import org.kodein.di.Kodein
+import org.kodein.di.KodeinAware
+import org.kodein.di.android.x.kodein
 
 /**
  *
@@ -41,9 +44,9 @@ import kotlinx.android.synthetic.main.fragment_delivery.*
  *
  * */
 class DeliveryFragment : Fragment() {
+
     private lateinit var binding: FragmentDeliveryBinding
     private lateinit var transactionAdapter: TransactionAdapter
-    private var list: ArrayList<DeliveryResponseModel>? = null
     private lateinit var deliveryDataSourceFactory: DeliveryDataSourceFactory
 
     val viewModel: DeliveryViewModel by lazy {
@@ -82,8 +85,7 @@ class DeliveryFragment : Fragment() {
      * initalise recyclerview
      */
     private fun setUpRecyclerViewData() {
-        deliveryDataSourceFactory =
-            DeliveryDataSourceFactory()
+        deliveryDataSourceFactory = DeliveryDataSourceFactory()
 
         swipeRefresh.setColorSchemeColors(Color.RED, Color.RED, Color.RED, Color.RED)
         deliveries_recycler_view.layoutManager =
@@ -128,13 +130,12 @@ class DeliveryFragment : Fragment() {
     /**
      * Method to handle pull to refresh functionality
      */
-    private fun swipeRefresh(){
+    private fun swipeRefresh() {
         swipeRefresh.setOnRefreshListener {
             (activity as MainActivity).progress_bar.show()
             viewModel.itemDataSourceFactory.liveNotificationDataSource.getValue()?.invalidate()
         }
     }
-
 
 }
 

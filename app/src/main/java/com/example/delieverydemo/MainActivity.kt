@@ -35,7 +35,7 @@ class MainActivity : AppCompatActivity() {
     /**
      * inital setUps
      */
-    private fun init(){
+    private fun init() {
         val findNavController = findNavController(R.id.nav_host_fragment)
 
         // Setup Action Bar
@@ -54,7 +54,5 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
-
-
     }
 }

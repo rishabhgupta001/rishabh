@@ -1,5 +1,6 @@
 package com.example.delieverydemo.api
 
+import com.example.delieverydemo.application.MyApplication
 import com.example.delieverydemo.delievery.model.DeliveryResponseModel
 import com.example.delieverydemo.utils.Constants
 import io.reactivex.Observable
@@ -16,18 +17,17 @@ import retrofit2.http.Query
 interface ApiService {
 
     companion object {
-        fun create(): ApiService {
+        operator fun invoke(): ApiService {
             val interceptor = HttpLoggingInterceptor()
             interceptor.level = HttpLoggingInterceptor.Level.BODY
             val client = OkHttpClient.Builder().addInterceptor(interceptor).build()
 
-            val retrofit =
-                Retrofit.Builder().addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-                    .addConverterFactory(GsonConverterFactory.create())
-                    .client(client)
-                    .baseUrl(Constants.BASE_URL)
-                    .build()
-            return retrofit.create(ApiService::class.java)
+            return Retrofit.Builder()
+                .client(client)
+                .baseUrl(Constants.BASE_URL)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build()
+                .create(ApiService::class.java)
         }
     }
 

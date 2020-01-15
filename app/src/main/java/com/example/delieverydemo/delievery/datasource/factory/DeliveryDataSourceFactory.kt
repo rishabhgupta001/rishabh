@@ -9,8 +9,20 @@ import com.example.delieverydemo.application.MyApplication
 import com.example.delieverydemo.delievery.datasource.DeliveryDataSouce
 import com.example.delieverydemo.delievery.model.DeliveryResponseModel
 
+/**
+ *
+​
+ * Purpose – Responsible for creating the DataSource so we can give it to the PagedList.
+​
+ * @author ​Rishabh Gupta
+​
+ * Created on January 10, 2020
+​
+ * Modified on January 11, 2020
+ *
+ * */
+
 class DeliveryDataSourceFactory : Factory<Int, DeliveryResponseModel>() {
-    val application: Application = MyApplication.mInstance
     //creating the mutable live data
     //getter for itemlivedatasource
     val itemLiveDataSource = MutableLiveData<PageKeyedDataSource<Int, DeliveryResponseModel>>()
@@ -24,10 +36,7 @@ class DeliveryDataSourceFactory : Factory<Int, DeliveryResponseModel>() {
 
     override fun create(): DataSource<Int, DeliveryResponseModel> {
         //getting our data source object
-        val itemDataSource =
-            DeliveryDataSouce(
-                application
-            )
+        val itemDataSource = DeliveryDataSouce()
 
         //posting the datasource to get the values
         itemLiveDataSource.postValue(itemDataSource)

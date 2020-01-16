@@ -1,10 +1,8 @@
 package com.example.delieverydemo.api
 
-import com.example.delieverydemo.application.MyApplication
 import com.example.delieverydemo.delievery.model.DeliveryResponseModel
 import com.example.delieverydemo.utils.Constants
 import io.reactivex.Observable
-import io.reactivex.Single
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Call
@@ -26,22 +24,23 @@ interface ApiService {
                 .client(client)
                 .baseUrl(Constants.BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create())
+                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .build()
                 .create(ApiService::class.java)
         }
     }
 
-    /*  @GET("v2/deliveries")
+      @GET("v2/deliveries")
       //query needed if there is any query
       fun getDeliveryList(
           @Query("limit") limit: Int,
           @Query("offset") offset: Int
-      ): Observable<ArrayList<DeliveryResponseModel>>*/
+      ): Observable<ArrayList<DeliveryResponseModel>>
 
-    @GET("v2/deliveries")
+    /*@GET("v2/deliveries")
     //query needed if there is any query
     fun getDeliveryList(
         @Query("limit") limit: Int,
         @Query("offset") offset: Int
-    ): Call<ArrayList<DeliveryResponseModel>>
+    ): Call<ArrayList<DeliveryResponseModel>>*/
 }

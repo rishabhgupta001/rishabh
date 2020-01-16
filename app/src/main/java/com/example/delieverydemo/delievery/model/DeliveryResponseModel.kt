@@ -2,7 +2,7 @@ package com.example.delieverydemo.delievery.model
 
 import androidx.room.Embedded
 import androidx.room.Entity
-import com.example.delieverydemo.api.StatusCode
+import androidx.room.PrimaryKey
 import java.io.Serializable
 
 /**
@@ -13,11 +13,11 @@ import java.io.Serializable
 data class DeliveryResponseModel(
     val deliveryFee: String = "",
     val goodsPicture: String = "",
+    @PrimaryKey
     val id: String = "",
     val pickupTime: String = "",
     val remarks: String = "",
     val surcharge: String = "",
-    var status: StatusCode = StatusCode.START,
     var error: String = "",
     @Embedded
     val route: Route? = null,

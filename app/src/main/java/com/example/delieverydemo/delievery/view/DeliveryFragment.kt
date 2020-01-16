@@ -12,14 +12,12 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.delieverydemo.MainActivity
 import com.example.delieverydemo.R
 import com.example.delieverydemo.api.NetworkState
 import com.example.delieverydemo.api.StatusCode
 import com.example.delieverydemo.databinding.FragmentDeliveryBinding
-import com.example.delieverydemo.delievery.datasource.factory.DeliveryDataSourceFactory
-import com.example.delieverydemo.delievery.model.DeliveryResponseModel
+import com.example.delieverydemo.delievery.datasource.factory.NetDeliveryDataSourceFactory
 import com.example.delieverydemo.delievery.view.adapter.TransactionAdapter
 import com.example.delieverydemo.delievery.viewmodel.DeliveryViewModel
 import com.example.delieverydemo.utils.hide
@@ -27,9 +25,6 @@ import com.example.delieverydemo.utils.show
 import com.example.delieverydemo.utils.toastShort
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_delivery.*
-import org.kodein.di.Kodein
-import org.kodein.di.KodeinAware
-import org.kodein.di.android.x.kodein
 
 /**
  *
@@ -47,7 +42,7 @@ class DeliveryFragment : Fragment() {
 
     private lateinit var binding: FragmentDeliveryBinding
     private lateinit var transactionAdapter: TransactionAdapter
-    private lateinit var deliveryDataSourceFactory: DeliveryDataSourceFactory
+    private lateinit var deliveryDataSourceFactory: NetDeliveryDataSourceFactory
 
     val viewModel: DeliveryViewModel by lazy {
         ViewModelProviders.of(this).get(DeliveryViewModel::class.java)
@@ -85,7 +80,7 @@ class DeliveryFragment : Fragment() {
      * initalise recyclerview
      */
     private fun setUpRecyclerViewData() {
-        deliveryDataSourceFactory = DeliveryDataSourceFactory()
+        deliveryDataSourceFactory = NetDeliveryDataSourceFactory()
 
         swipeRefresh.setColorSchemeColors(Color.RED, Color.RED, Color.RED, Color.RED)
         deliveries_recycler_view.layoutManager =

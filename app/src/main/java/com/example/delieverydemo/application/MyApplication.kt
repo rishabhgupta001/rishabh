@@ -3,14 +3,10 @@ package com.example.delieverydemo.application
 import android.app.Application
 import com.example.delieverydemo.api.ApiService
 import com.example.delieverydemo.api.NetworkConnectionInterceptor
-import com.example.delieverydemo.delievery.datasource.DeliveryDataSouce
-import com.example.delieverydemo.delievery.datasource.factory.DeliveryDataSourceFactory
-import okhttp3.logging.HttpLoggingInterceptor
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.x.androidXModule
 import org.kodein.di.generic.bind
 import org.kodein.di.generic.instance
-import org.kodein.di.generic.provider
 import org.kodein.di.generic.singleton
 import org.kodein.di.Kodein
 

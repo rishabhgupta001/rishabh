@@ -20,11 +20,15 @@ import com.example.delieverydemo.databinding.FragmentDeliveryBinding
 import com.example.delieverydemo.delievery.datasource.factory.NetDeliveryDataSourceFactory
 import com.example.delieverydemo.delievery.view.adapter.TransactionAdapter
 import com.example.delieverydemo.delievery.viewmodel.DeliveryViewModel
+import com.example.delieverydemo.delievery.viewmodelfactory.DeliveryViewModelFactory
 import com.example.delieverydemo.utils.hide
 import com.example.delieverydemo.utils.show
 import com.example.delieverydemo.utils.toastShort
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_delivery.*
+import org.kodein.di.KodeinAware
+import org.kodein.di.android.x.kodein
+import org.kodein.di.generic.instance
 
 /**
  *
@@ -38,14 +42,16 @@ import kotlinx.android.synthetic.main.fragment_delivery.*
  * Modified on January 13, 2020
  *
  * */
-class DeliveryFragment : Fragment() {
+class DeliveryFragment : Fragment(), KodeinAware {
+
+    override val kodein by kodein()
+    private val factory: DeliveryViewModelFactory by instance()
 
     private lateinit var binding: FragmentDeliveryBinding
     private lateinit var transactionAdapter: TransactionAdapter
-    private lateinit var deliveryDataSourceFactory: NetDeliveryDataSourceFactory
 
     val viewModel: DeliveryViewModel by lazy {
-        ViewModelProviders.of(this).get(DeliveryViewModel::class.java)
+        ViewModelProviders.of(this, factory).get(DeliveryViewModel::class.java)
     }
 
     //lifecycle method OnCreateView
@@ -80,15 +86,18 @@ class DeliveryFragment : Fragment() {
      * initalise recyclerview
      */
     private fun setUpRecyclerViewData() {
-        deliveryDataSourceFactory = NetDeliveryDataSourceFactory()
-
         swipeRefresh.setColorSchemeColors(Color.RED, Color.RED, Color.RED, Color.RED)
         deliveries_recycler_view.layoutManager =
             LinearLayoutManager(context, RecyclerView.VERTICAL, false)
         transactionAdapter = TransactionAdapter()
 
-        viewModel.itemPagedList.observe(this, Observer { data ->
-            transactionAdapter.submitList(data)
+        viewModel.getDeliveryList().observe(this, Observer { pagedList ->
+            //submitList is another special PagedListAdapter method that
+            // feeds a PagedList into the adapter and automatically starts the loading process.
+
+            //The PagedListAdapter is now receiving a PagedList, which,
+            // in turn, is calling into the DataSource to generate new items.
+            transactionAdapter.submitList(pagedList)
             swipeRefresh.isRefreshing = false
         })
     }
@@ -98,23 +107,28 @@ class DeliveryFragment : Fragment() {
      */
     private fun observeNetworkState() {
         //get the Network state (on hitting api respone success,error an all..)
-        viewModel.networkState.observe(this, object : Observer<NetworkState> {
+        viewModel.getNetworkState().observe(this, object : Observer<NetworkState> {
             override fun onChanged(networkState: NetworkState?) {
                 //show loader inside adapter row via Network Status
                 transactionAdapter.setNetworkState(networkState!!)
-                when {
-                    networkState.statusCode == StatusCode.START -> {
+                when (networkState.statusCode) {
+                    StatusCode.NETWORK_ERROR -> {
+                        (activity as MainActivity).progress_bar.hide()
+                        context?.toastShort(getString(R.string.text_no_internet_available))
+                    }
+                    StatusCode.START -> {
 //                        by default progress visibility is gone in xml view
 //                        progressBar.visibility = View.VISIBLE
                     }
-                    networkState.statusCode == StatusCode.SUCCESS -> {
+                    StatusCode.SUCCESS -> {
                         (activity as MainActivity).progress_bar.hide()
 
                     }
-                    networkState.statusCode == StatusCode.ERROR -> {
+                    StatusCode.ERROR -> {
                         (activity as MainActivity).progress_bar.hide()
                         context?.toastShort(getString(R.string.text_something_went_wrong))
                     }
+
                 }
             }
         })
@@ -128,7 +142,7 @@ class DeliveryFragment : Fragment() {
     private fun swipeRefresh() {
         swipeRefresh.setOnRefreshListener {
             (activity as MainActivity).progress_bar.show()
-            viewModel.itemDataSourceFactory.liveNotificationDataSource.getValue()?.invalidate()
+            viewModel.onSwipeRefrenh()
         }
     }
 

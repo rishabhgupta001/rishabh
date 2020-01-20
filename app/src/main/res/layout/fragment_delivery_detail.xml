@@ -3,12 +3,12 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
-     <data>
+    <data>
 
-          <variable
-              name="data"
-              type="com.example.delieverydemo.delievery.model.DeliveryResponseModel" />
-     </data>
+        <variable
+            name="data"
+            type="com.example.delieverydemo.delievery.model.DeliveryResponseModel" />
+    </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -206,6 +206,7 @@
                             android:layout_marginBottom="@dimen/_10sdp"
                             android:ellipsize="end"
                             android:maxLines="1"
+                            android:text="@{data.price}"
                             android:textColor="@color/colorFontDark"
                             android:textSize="@dimen/_12sdp"
                             app:layout_constraintEnd_toEndOf="parent"
@@ -233,6 +234,7 @@
             android:layout_marginEnd="@dimen/_5sdp"
             android:layout_marginBottom="@dimen/_5sdp"
             app:cardBackgroundColor="@color/colorGrayDark"
+            android:foreground="?android:attr/selectableItemBackground"
             app:cardElevation="@dimen/_2sdp"
             app:contentPadding="@dimen/_10sdp"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -248,7 +250,7 @@
                     android:layout_height="wrap_content"
                     android:ellipsize="end"
                     android:maxLines="1"
-                    android:text="@string/text_add_to_fav"
+                    android:text="@{deliveryData.favorite ? @string/remove_fav : @string/text_add_to_fav}"
                     android:textColor="@color/colorFontDark"
                     android:textSize="@dimen/_12sdp"
                     app:layout_constraintEnd_toStartOf="@+id/fav_img_lay"
@@ -264,6 +266,7 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toEndOf="@+id/delive_text_view"
                     app:layout_constraintTop_toTopOf="parent">
+                    <!--android:src="@drawable/img_fav_black_border"-->
 
                     <ImageView
                         android:id="@+id/fav_img_view"
@@ -272,7 +275,7 @@
                         android:layout_marginTop="@dimen/_5sdp"
                         android:adjustViewBounds="true"
                         android:contentDescription="@null"
-                        android:src="@drawable/img_fav_black_border"
+                        android:src="@{data.isFavourite ? @drawable/img_fav_black : @drawable/img_fav_black_border }"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
 

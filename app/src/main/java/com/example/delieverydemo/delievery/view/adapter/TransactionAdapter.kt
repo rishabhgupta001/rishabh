@@ -97,9 +97,6 @@ class TransactionAdapter :
         ) {
             binding.data = data
             Utils.setImage(binding.productImageView, data.goodsPicture)
-            val price =
-                data.deliveryFee.removePrefix("$").toFloat() + data.surcharge.removePrefix("$").toFloat()
-            binding.priceTxtView.text = "$${price}"
         }
     }
 

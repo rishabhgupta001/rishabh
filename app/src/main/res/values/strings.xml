@@ -15,6 +15,7 @@
     <string name="text_goods_to_deliver">Goods to deliever</string>
     <string name="text_delivery_fee">Delivery Fee</string>
     <string name="text_add_to_fav">Add to Favourite</string>
+    <string name="text_remove_fav">Remove From Favourite</string>
 
 
 </resources>

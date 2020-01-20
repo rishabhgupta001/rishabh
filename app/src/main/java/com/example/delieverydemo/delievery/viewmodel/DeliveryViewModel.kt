@@ -1,36 +1,38 @@
 package com.example.delieverydemo.delievery.viewmodel
 
-import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Transformations
-import androidx.paging.LivePagedListBuilder
-import androidx.paging.PageKeyedDataSource
+import androidx.lifecycle.ViewModel
 import androidx.paging.PagedList
 import com.example.delieverydemo.api.NetworkState
-import com.example.delieverydemo.delievery.datasource.NetDeliveryDataSouce
-import com.example.delieverydemo.delievery.datasource.factory.NetDeliveryDataSourceFactory
+import com.example.delieverydemo.delievery.DeliveryRepository
 import com.example.delieverydemo.delievery.model.DeliveryResponseModel
-import com.example.delieverydemo.utils.Constants.LOADING_PAGE_SIZE
 
-class DeliveryViewModel(application: Application) : AndroidViewModel(application) {
-    var itemPagedList: LiveData<PagedList<DeliveryResponseModel>> = MutableLiveData<PagedList<DeliveryResponseModel>>()
-    var liveDataSource: LiveData<PageKeyedDataSource<Int, DeliveryResponseModel>> = MutableLiveData<PageKeyedDataSource<Int, DeliveryResponseModel>>()
-    var networkState: LiveData<NetworkState> = MutableLiveData()
-    val itemDataSourceFactory =
-        NetDeliveryDataSourceFactory()
 
-    init {
-        liveDataSource = itemDataSourceFactory.itemLiveDataSource
+/**
+ *
+​
+ * Purpose – ViewModel
+​
+ * @author ​Rishabh Gupta
+​
+ * Created on January 10, 2020
+​
+ * Modified on January 11, 2020
+ *
+ * */
 
-        networkState = Transformations.switchMap(itemDataSourceFactory.liveNotificationDataSource, NetDeliveryDataSouce::networkState)
+class DeliveryViewModel(val repository: DeliveryRepository) : ViewModel() {
 
-        val pagedListConfig = PagedList.Config.Builder()
-            .setEnablePlaceholders(true)
-            .setPageSize(LOADING_PAGE_SIZE).build()
+    fun getDeliveryList(): LiveData<PagedList<DeliveryResponseModel>> = repository.getPagedList()
 
-        itemPagedList = LivePagedListBuilder(itemDataSourceFactory, pagedListConfig)
-            .build()
-    }
+    fun getNetworkState(): MutableLiveData<NetworkState> = repository.getPageLoadingState()
+
+    /**
+     * Method to Signal the data source to stop loading, and notify its callback
+     */
+    fun onSwipeRefrenh() = repository.stopLoadingAndRefresh()
+
+
 }

@@ -1,5 +1,6 @@
 package com.example.delieverydemo.storage
 
+import androidx.paging.DataSource
 import androidx.room.*
 import com.example.delieverydemo.delievery.model.DeliveryResponseModel
 
@@ -19,7 +20,7 @@ import com.example.delieverydemo.delievery.model.DeliveryResponseModel
 @Dao
 interface DeliveryDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    fun insertDelivery(delivery: DeliveryResponseModel)
+    fun insertDelivery(delivery: ArrayList<DeliveryResponseModel>)
 
     @Update
     fun updateNote(delivery: DeliveryResponseModel)
@@ -31,6 +32,11 @@ interface DeliveryDao {
     fun deleteAllMovies()
 
 
+    /**
+     * Room will generate one that uses an Int key to pull Delivery objects
+     * from the database as you scroll. (Here it act as a DataSource)
+     */
     @Query("SELECT * FROM delivery")
-    fun getAllDelivery(): List<DeliveryResponseModel>
+    fun getAllDelivery(): DataSource.Factory<Int, DeliveryResponseModel>
+
 }

@@ -94,9 +94,9 @@
                 android:textSize="@dimen/_12sdp"
                 app:layout_constraintBaseline_toBaselineOf="@+id/to_txt_view"
                 app:layout_constraintBottom_toTopOf="@+id/to_txt_view"
+                app:layout_constraintEnd_toStartOf="@+id/price_txt_view"
                 app:layout_constraintStart_toEndOf="@+id/from_txt_view"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/price_txt_view"
                 app:layout_constraintVertical_chainStyle="packed" />
 
 
@@ -133,7 +133,7 @@
                 android:layout_marginTop="@dimen/_10sdp"
                 android:layout_marginEnd="@dimen/_20sdp"
                 android:layout_marginBottom="@dimen/_5sdp"
-                android:text="$85"
+                android:text="@{data.price}"
                 android:textColor="@color/colorFontDark"
                 android:textSize="@dimen/_12sdp"
                 app:layout_constraintBaseline_toBaselineOf="@+id/to_txt_view"

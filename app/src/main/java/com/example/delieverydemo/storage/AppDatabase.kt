@@ -1,18 +1,11 @@
 package com.example.delieverydemo.storage
 
 import android.content.Context
-import androidx.lifecycle.LiveData
-import androidx.paging.LivePagedListBuilder
-import androidx.paging.PagedList
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import com.example.delieverydemo.delievery.model.DeliveryResponseModel
-import com.example.delieverydemo.storage.paging.DbDeliveryDataSourceFactory
-import com.example.delieverydemo.utils.Constants
 import com.example.delieverydemo.utils.Constants.DATA_BASE_NAME
-import java.util.concurrent.Executor
-import java.util.concurrent.Executors
 
 /**
  *
@@ -28,8 +21,7 @@ import java.util.concurrent.Executors
  * */
 
 @Database(entities = [DeliveryResponseModel::class], version = 1)
-abstract class DeliveryDatabase : RoomDatabase() {
-    private lateinit var moviesPaged: LiveData<PagedList<DeliveryResponseModel>>
+abstract class AppDatabase : RoomDatabase() {
 
     //it is a function with NoteDao(Interface) return type
     abstract fun getDeliveryDao(): DeliveryDao
@@ -37,7 +29,7 @@ abstract class DeliveryDatabase : RoomDatabase() {
     companion object {
 
         @Volatile
-        private var instance: DeliveryDatabase? = null
+        private var instance: AppDatabase? = null
         private val LOCK = Any()
 
         operator fun invoke(context: Context) = instance ?: synchronized(LOCK) {
@@ -48,26 +40,9 @@ abstract class DeliveryDatabase : RoomDatabase() {
 
         private fun buildDatabase(context: Context) = Room.databaseBuilder(
             context.applicationContext,
-            DeliveryDatabase::class.java,
+            AppDatabase::class.java,
             DATA_BASE_NAME
         ).build()
     }
-
-    open fun init() {
-        val pagedListConfig = PagedList.Config.Builder()
-            .setEnablePlaceholders(false)
-            .setPageSize(20)
-            .build()
-
-        val dataSourceFactory = DbDeliveryDataSourceFactory(getDeliveryDao())
-
-        moviesPaged = LivePagedListBuilder(dataSourceFactory, pagedListConfig)
-            .build()
-    }
-
-    open fun getMovies(): LiveData<PagedList<DeliveryResponseModel>> {
-        return moviesPaged
-    }
-
 
 }

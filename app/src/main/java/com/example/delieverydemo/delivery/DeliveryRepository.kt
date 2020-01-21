@@ -143,6 +143,7 @@ class DeliveryRepository(
         networkState = Transformations.switchMap(itemDataSourceFactory.liveNotificationDataSource, NetDeliveryDataSouce::networkState)
 
         val pagedListConfig = PagedList.Config.Builder()
+
             .setEnablePlaceholders(true)
             .setPageSize(LOADING_PAGE_SIZE).build()
 

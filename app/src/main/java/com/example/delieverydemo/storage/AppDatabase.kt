@@ -4,7 +4,7 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import com.example.delieverydemo.delievery.model.DeliveryResponseModel
+import com.example.delieverydemo.delivery.model.DeliveryResponseModel
 import com.example.delieverydemo.utils.Constants.DATA_BASE_NAME
 
 /**
@@ -20,7 +20,7 @@ import com.example.delieverydemo.utils.Constants.DATA_BASE_NAME
  *
  * */
 
-@Database(entities = [DeliveryResponseModel::class], version = 1)
+@Database(entities = [DeliveryResponseModel::class], version = 1, exportSchema = false)
 abstract class AppDatabase : RoomDatabase() {
 
     //it is a function with NoteDao(Interface) return type

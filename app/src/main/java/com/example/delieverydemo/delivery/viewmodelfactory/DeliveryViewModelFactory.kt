@@ -1,9 +1,9 @@
-package com.example.delieverydemo.delievery.viewmodelfactory
+package com.example.delieverydemo.delivery.viewmodelfactory
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.example.delieverydemo.delievery.DeliveryRepository
-import com.example.delieverydemo.delievery.viewmodel.DeliveryViewModel
+import com.example.delieverydemo.delivery.DeliveryRepository
+import com.example.delieverydemo.delivery.viewmodel.DeliveryViewModel
 
 @Suppress("UNCHECKED_CAST")
 class DeliveryViewModelFactory(private val repositry: DeliveryRepository) :

@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools">
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
 
         <variable
             name="data"
-            type="com.example.delieverydemo.delievery.model.DeliveryResponseModel" />
+            type="com.example.delieverydemo.delivery.model.DeliveryResponseModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -250,7 +249,7 @@
                     android:layout_height="wrap_content"
                     android:ellipsize="end"
                     android:maxLines="1"
-                    android:text="@{deliveryData.favorite ? @string/remove_fav : @string/text_add_to_fav}"
+                    android:text="@{data.isFavourite ? @string/text_remove_fav : @string/text_add_to_fav}"
                     android:textColor="@color/colorFontDark"
                     android:textSize="@dimen/_12sdp"
                     app:layout_constraintEnd_toStartOf="@+id/fav_img_lay"

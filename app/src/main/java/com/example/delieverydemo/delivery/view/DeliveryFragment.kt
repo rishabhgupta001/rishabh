@@ -1,4 +1,4 @@
-package com.example.delieverydemo.delievery.view
+package com.example.delieverydemo.delivery.view
 
 
 import android.graphics.Color
@@ -17,10 +17,9 @@ import com.example.delieverydemo.R
 import com.example.delieverydemo.api.NetworkState
 import com.example.delieverydemo.api.StatusCode
 import com.example.delieverydemo.databinding.FragmentDeliveryBinding
-import com.example.delieverydemo.delievery.datasource.factory.NetDeliveryDataSourceFactory
-import com.example.delieverydemo.delievery.view.adapter.TransactionAdapter
-import com.example.delieverydemo.delievery.viewmodel.DeliveryViewModel
-import com.example.delieverydemo.delievery.viewmodelfactory.DeliveryViewModelFactory
+import com.example.delieverydemo.delivery.view.adapter.TransactionAdapter
+import com.example.delieverydemo.delivery.viewmodel.DeliveryViewModel
+import com.example.delieverydemo.delivery.viewmodelfactory.DeliveryViewModelFactory
 import com.example.delieverydemo.utils.hide
 import com.example.delieverydemo.utils.show
 import com.example.delieverydemo.utils.toastShort
@@ -50,7 +49,7 @@ class DeliveryFragment : Fragment(), KodeinAware {
     private lateinit var binding: FragmentDeliveryBinding
     private lateinit var transactionAdapter: TransactionAdapter
 
-    val viewModel: DeliveryViewModel by lazy {
+    private val viewModel: DeliveryViewModel by lazy {
         ViewModelProviders.of(this, factory).get(DeliveryViewModel::class.java)
     }
 
@@ -60,9 +59,9 @@ class DeliveryFragment : Fragment(), KodeinAware {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_delivery, container, false);
+        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_delivery, container, false)
 
-        return binding.getRoot()
+        return binding.root
     }
 
     //lifecycle method onViewCreated
@@ -107,18 +106,18 @@ class DeliveryFragment : Fragment(), KodeinAware {
      */
     private fun observeNetworkState() {
         //get the Network state (on hitting api respone success,error an all..)
-        viewModel.getNetworkState().observe(this, object : Observer<NetworkState> {
-            override fun onChanged(networkState: NetworkState?) {
+        viewModel.getNetworkState().observe(this,
+            Observer<NetworkState> { networkState ->
                 //show loader inside adapter row via Network Status
                 transactionAdapter.setNetworkState(networkState!!)
                 when (networkState.statusCode) {
                     StatusCode.NETWORK_ERROR -> {
                         (activity as MainActivity).progress_bar.hide()
-                        context?.toastShort(getString(R.string.text_no_internet_available))
+                        context?.toastShort(getString(R.string.text_make_sure_no_data_connection))
                     }
                     StatusCode.START -> {
-//                        by default progress visibility is gone in xml view
-//                        progressBar.visibility = View.VISIBLE
+                        //by default progress visibility is gone in xml view
+                        (activity as MainActivity).progress_bar.show()
                     }
                     StatusCode.SUCCESS -> {
                         (activity as MainActivity).progress_bar.hide()
@@ -126,12 +125,11 @@ class DeliveryFragment : Fragment(), KodeinAware {
                     }
                     StatusCode.ERROR -> {
                         (activity as MainActivity).progress_bar.hide()
-                        context?.toastShort(getString(R.string.text_something_went_wrong))
+                        context?.toastShort(networkState.msg)
                     }
 
                 }
-            }
-        })
+            })
 
         deliveries_recycler_view.adapter = transactionAdapter
     }

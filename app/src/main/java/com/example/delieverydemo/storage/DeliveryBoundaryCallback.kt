@@ -7,21 +7,21 @@ import androidx.paging.PagedList
 import com.example.delieverydemo.api.ApiService
 import com.example.delieverydemo.api.NetworkState
 import com.example.delieverydemo.api.StatusCode
-import com.example.delieverydemo.delievery.model.DeliveryResponseModel
+import com.example.delieverydemo.delivery.model.DeliveryResponseModel
 import com.example.delieverydemo.utils.Constants.LOADING_PAGE_SIZE
 import io.reactivex.Completable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 
-class DeliveryBoundaryCallback(val apiService: ApiService, val db: AppDatabase) :
+class DeliveryBoundaryCallback(private val apiService: ApiService, private val db: AppDatabase) :
     PagedList.BoundaryCallback<DeliveryResponseModel>() {
 
     private val TAG = DeliveryBoundaryCallback::class.java.simpleName
-    var totalCount: Int = 0
+    private var totalCount: Int = 0
     private var isLoaded: Boolean = false
     var networkState: MutableLiveData<NetworkState> = MutableLiveData()
-    var disposable = CompositeDisposable()
+    private var disposable = CompositeDisposable()
 
     /**
      * Method lets you know when it has no data
@@ -62,10 +62,8 @@ class DeliveryBoundaryCallback(val apiService: ApiService, val db: AppDatabase) 
                 //below code is working on Main thread
                 .subscribe(
                     { sucess ->
-                        updateState(NetworkState.SUCCESS)
                         success(sucess)
                     }, { error ->
-                        updateState(NetworkState(StatusCode.ERROR, error.message!!))
                         handleError(error)
                     })
         )
@@ -73,6 +71,8 @@ class DeliveryBoundaryCallback(val apiService: ApiService, val db: AppDatabase) 
 
     @SuppressLint("CheckResult")
     private fun success(data: ArrayList<DeliveryResponseModel>) {
+        updateState(NetworkState.SUCCESS)
+
         if (data.size > 0) {
             Log.d(TAG, "fetchDelivery success loading")
             totalCount = data.size
@@ -80,13 +80,13 @@ class DeliveryBoundaryCallback(val apiService: ApiService, val db: AppDatabase) 
                 Log.d(TAG, "fetchDelivery success item less than LOADING_PAGE_SIZE")
 
             } else {
-                Log.d(TAG, "fetchDelivery success item morethan than LOADING_PAGE_SIZE")
+                Log.d(TAG, "fetchDelivery success item more than than LOADING_PAGE_SIZE")
             }
 
             //
             Completable.complete().subscribeOn(Schedulers.io())
                 //currently below code is running on Schedulers.io() thread
-                .subscribe { db.getDeliveryDao().insertDelivery(data) }
+                .subscribe { db.getDeliveryDao().insertAll(data) }
         } else {
             Log.d(TAG, "fetchDelivery success No data found")
         }
@@ -94,6 +94,7 @@ class DeliveryBoundaryCallback(val apiService: ApiService, val db: AppDatabase) 
 
     private fun handleError(throwable: Throwable) {
         Log.d(TAG, "fetch delivery Error  ${throwable.message}")
+        updateState(NetworkState(StatusCode.ERROR, throwable.message!!))
     }
 
     fun clear() {
@@ -111,7 +112,7 @@ class DeliveryBoundaryCallback(val apiService: ApiService, val db: AppDatabase) 
         onZeroItemsLoaded()
     }
 
-    fun updateState(networkState: NetworkState) {
+    private fun updateState(networkState: NetworkState) {
         this.networkState.postValue(networkState)
     }
 }

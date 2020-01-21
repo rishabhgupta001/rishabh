@@ -1,20 +1,25 @@
-package com.example.delieverydemo.delievery.view
+package com.example.delieverydemo.delivery.view
 
 
 import android.annotation.SuppressLint
 import android.os.Bundle
 import android.os.Handler
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
-
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProviders
 import com.example.delieverydemo.R
 import com.example.delieverydemo.databinding.FragmentDeliveryDetailBinding
-import com.example.delieverydemo.delievery.model.DeliveryResponseModel
+import com.example.delieverydemo.delivery.model.DeliveryResponseModel
+import com.example.delieverydemo.delivery.viewmodel.DeliveryViewModel
+import com.example.delieverydemo.delivery.viewmodelfactory.DeliveryViewModelFactory
 import com.example.delieverydemo.utils.Utils
 import kotlinx.android.synthetic.main.fragment_delivery_detail.*
+import org.kodein.di.KodeinAware
+import org.kodein.di.android.x.kodein
+import org.kodein.di.generic.instance
 
 /**
  *
@@ -28,9 +33,16 @@ import kotlinx.android.synthetic.main.fragment_delivery_detail.*
  * Modified on January 9, 2020
  *
  * */
-class DeliveryDetailFragment : Fragment(), View.OnClickListener {
+class DeliveryDetailFragment : Fragment(), View.OnClickListener, KodeinAware {
     private var itemData: DeliveryResponseModel? = null
     private lateinit var binding: FragmentDeliveryDetailBinding
+
+    override val kodein by kodein()
+    private val factory: DeliveryViewModelFactory by instance()
+
+    private val viewModel: DeliveryViewModel by lazy {
+        ViewModelProviders.of(this, factory).get(DeliveryViewModel::class.java)
+    }
 
     override fun onClick(view: View?) {
         when (view?.id) {
@@ -44,9 +56,13 @@ class DeliveryDetailFragment : Fragment(), View.OnClickListener {
                         if (itemData?.isFavourite!!) {
                             delive_text_view.text = getString(R.string.text_add_to_fav)
                             fav_img_view.setImageResource(R.drawable.img_fav_black)
+                            viewModel.setFav(itemData!!)
+                            fragmentManager?.popBackStack()
                         } else {
                             delive_text_view.text = getString(R.string.text_remove_fav)
                             fav_img_view.setImageResource(R.drawable.img_fav_black_border)
+                            viewModel.setFav(itemData!!)
+                            fragmentManager?.popBackStack()
                         }
                     }
                 }, 100)
@@ -61,7 +77,7 @@ class DeliveryDetailFragment : Fragment(), View.OnClickListener {
         binding =
             DataBindingUtil.inflate(inflater, R.layout.fragment_delivery_detail, container, false)
 
-        return binding.getRoot()
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

@@ -1,4 +1,4 @@
-package com.example.delieverydemo.delievery.datasource
+package com.example.delieverydemo.delivery.datasource
 
 import android.annotation.SuppressLint
 import androidx.lifecycle.MutableLiveData
@@ -7,7 +7,7 @@ import com.example.delieverydemo.api.ApiService
 import com.example.delieverydemo.api.NetworkState
 import com.example.delieverydemo.api.StatusCode
 import com.example.delieverydemo.application.MyApplication
-import com.example.delieverydemo.delievery.model.DeliveryResponseModel
+import com.example.delieverydemo.delivery.model.DeliveryResponseModel
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import org.kodein.di.Kodein
@@ -34,13 +34,13 @@ class NetDeliveryDataSouce :
     override val kodein: Kodein by kodein(MyApplication.mInstance)
     private val apiService: ApiService by instance()
 
-    var limit: Int = 20
+    private var limit: Int = 20
     var networkState: MutableLiveData<NetworkState>
 
 
     init {
         //initializing networkState live date to get network status while hitting api like: success, error etc.
-        networkState = MutableLiveData<NetworkState>()
+        networkState = MutableLiveData()
     }
 
     @SuppressLint("CheckResult")

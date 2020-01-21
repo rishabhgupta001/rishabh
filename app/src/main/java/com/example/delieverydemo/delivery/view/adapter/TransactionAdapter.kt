@@ -1,4 +1,4 @@
-package com.example.delieverydemo.delievery.view.adapter
+package com.example.delieverydemo.delivery.view.adapter
 
 import android.annotation.SuppressLint
 import android.os.Handler
@@ -15,8 +15,8 @@ import com.example.delieverydemo.api.NetworkState
 import com.example.delieverydemo.api.StatusCode
 import com.example.delieverydemo.databinding.ItemLayoutTransactionBinding
 import com.example.delieverydemo.databinding.NetworkItemBinding
-import com.example.delieverydemo.delievery.model.DeliveryResponseModel
-import com.example.delieverydemo.delievery.view.DeliveryFragmentDirections
+import com.example.delieverydemo.delivery.model.DeliveryResponseModel
+import com.example.delieverydemo.delivery.view.DeliveryFragmentDirections
 import com.example.delieverydemo.utils.Pref.TYPE_ITEM
 import com.example.delieverydemo.utils.Pref.TYPE_PROGRESS
 import com.example.delieverydemo.utils.Utils
@@ -29,10 +29,10 @@ class TransactionAdapter :
 
         val inflater: LayoutInflater = LayoutInflater.from(parent.context)
 
-        if (viewType == TYPE_PROGRESS) {
+        return if (viewType == TYPE_PROGRESS) {
             //item_network_state layout inflated
             val binding = NetworkItemBinding.inflate(inflater, parent, false)
-            return NetworkStateItemViewHolder(binding)
+            NetworkStateItemViewHolder(binding)
 
         } else {
             //notifications_item_layout layout inflated
@@ -42,7 +42,7 @@ class TransactionAdapter :
                 parent,
                 false
             )
-            return TransactionViewHolder(binding)
+            TransactionViewHolder(binding)
         }
     }
 
@@ -59,17 +59,17 @@ class TransactionAdapter :
     companion object {
         val diff = object : DiffUtil.ItemCallback<DeliveryResponseModel>() {
             override fun areItemsTheSame(
-                p0: DeliveryResponseModel,
-                p1: DeliveryResponseModel
+                oldItem: DeliveryResponseModel,
+                newItem: DeliveryResponseModel
             ): Boolean {
-                return p0.id == p1.id
+                return oldItem.id == newItem.id
             }
 
             override fun areContentsTheSame(
-                p0: DeliveryResponseModel,
-                p1: DeliveryResponseModel
+                oldItem: DeliveryResponseModel,
+                newItem: DeliveryResponseModel
             ): Boolean {
-                return p0.id == p1.id
+                return oldItem.id == newItem.id && oldItem.isFavourite == newItem.isFavourite
             }
 
         }
@@ -106,33 +106,33 @@ class TransactionAdapter :
 
         fun bind(networkState: NetworkState?) {
             if (networkState != null && networkState.statusCode == StatusCode.START) {
-                binding.progressBarPaging.setVisibility(View.VISIBLE)
+                binding.progressBarPaging.visibility = View.VISIBLE
             } else {
                 //Status SUCCESS
-                binding.progressBarPaging.setVisibility(View.GONE)
+                binding.progressBarPaging.visibility = View.GONE
             }
 
             if (networkState != null && networkState.statusCode == StatusCode.ERROR) {
-                binding.errorMsg.setVisibility(View.VISIBLE)
-                binding.errorMsg.setText(networkState.msg)
+                binding.errorMsg.visibility = View.VISIBLE
+                binding.errorMsg.text = networkState.msg
             } else {
-                binding.errorMsg.setVisibility(View.GONE)
+                binding.errorMsg.visibility = View.GONE
             }
         }
     }
 
     private fun hasExtraRow(): Boolean {
-        if (networkState != null && networkState !== NetworkState.SUCCESS)
-            return true
+        return if (networkState != null && networkState !== NetworkState.SUCCESS)
+            true
         else
-            return false
+            false
     }
 
     override fun getItemViewType(position: Int): Int {
-        if (hasExtraRow() && position == itemCount - 1) {
-            return TYPE_PROGRESS
+        return if (hasExtraRow() && position == itemCount - 1) {
+            TYPE_PROGRESS
         } else {
-            return TYPE_ITEM
+            TYPE_ITEM
         }
     }
 

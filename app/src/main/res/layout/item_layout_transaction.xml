@@ -4,10 +4,10 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
-
+        <import type="android.view.View"/>
         <variable
             name="data"
-            type="com.example.delieverydemo.delievery.model.DeliveryResponseModel" />
+            type="com.example.delieverydemo.delivery.model.DeliveryResponseModel" />
     </data>
 
     <androidx.cardview.widget.CardView
@@ -109,7 +109,8 @@
                 app:layout_constraintBottom_toTopOf="@+id/price_txt_view"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_chainStyle="packed">
+                app:layout_constraintVertical_chainStyle="packed"
+                tools:ignore="UnusedAttribute">
 
                 <ImageView
                     android:id="@+id/fav_img_view"
@@ -119,7 +120,8 @@
                     android:layout_marginEnd="@dimen/_10sdp"
                     android:adjustViewBounds="true"
                     android:contentDescription="@null"
-                    android:src="@drawable/img_fav_black"
+                    android:src="@{data.isFavourite ? @drawable/img_fav_black : @drawable/img_fav_black_border}"
+                    android:visibility="@{data.isFavourite ? View.VISIBLE : View.GONE}"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 

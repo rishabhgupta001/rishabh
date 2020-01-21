@@ -5,15 +5,13 @@
     <string name="text_my_deliveries">My Deliveries</string>
     <string name="text_from">From:</string>
     <string name="text_to">To:</string>
-    <string name="text_dollar_with_amount">$ %s</string>
-    <string name="text_no_internet_available">Internet not available</string>
+    <string name="text_make_sure_no_data_connection">Make sure you have an active data connection</string>
     <string name="text_something_went_wrong">Something went wrong</string>
 
 
     <!--Delivery Detail Screen-->
     <string name="text_delivery_details">Delivery Details</string>
     <string name="text_goods_to_deliver">Goods to deliever</string>
-    <string name="text_delivery_fee">Delivery Fee</string>
     <string name="text_add_to_fav">Add to Favourite</string>
     <string name="text_remove_fav">Remove From Favourite</string>
 

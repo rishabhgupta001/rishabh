@@ -1,11 +1,11 @@
-package com.example.delieverydemo.delievery.datasource.factory
+package com.example.delieverydemo.delivery.datasource.factory
 
 import androidx.lifecycle.MutableLiveData
 import androidx.paging.DataSource
 import androidx.paging.DataSource.Factory
 import androidx.paging.PageKeyedDataSource
-import com.example.delieverydemo.delievery.datasource.NetDeliveryDataSouce
-import com.example.delieverydemo.delievery.model.DeliveryResponseModel
+import com.example.delieverydemo.delivery.datasource.NetDeliveryDataSouce
+import com.example.delieverydemo.delivery.model.DeliveryResponseModel
 
 /**
  *

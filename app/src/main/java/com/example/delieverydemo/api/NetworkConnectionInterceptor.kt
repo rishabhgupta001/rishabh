@@ -5,6 +5,7 @@ import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.os.Build
 import androidx.annotation.RequiresApi
+import com.example.delieverydemo.R
 import com.example.delieverydemo.utils.NoInternetException
 import okhttp3.Interceptor
 import okhttp3.Response
@@ -15,7 +16,7 @@ class NetworkConnectionInterceptor(context: Context) : Interceptor {
     @RequiresApi(Build.VERSION_CODES.M)
     override fun intercept(chain: Interceptor.Chain): Response {
         if (!isInternetAvailable())
-            throw NoInternetException("Make sure you have an active data connection")
+            throw NoInternetException(applicationContext.getString(R.string.text_make_sure_no_data_connection))
 
         return chain.proceed(chain.request())
     }

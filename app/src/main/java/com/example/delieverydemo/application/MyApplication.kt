@@ -5,8 +5,8 @@ import com.example.delieverydemo.api.ApiService
 import com.example.delieverydemo.api.NetworkConnectionInterceptor
 import com.example.delieverydemo.delivery.DeliveryRepository
 import com.example.delieverydemo.delivery.viewmodelfactory.DeliveryViewModelFactory
-import com.example.delieverydemo.storage.AppDatabase
-import com.example.delieverydemo.storage.DeliveryBoundaryCallback
+import com.example.delieverydemo.storage.db.AppDatabase
+import com.example.delieverydemo.storage.db.DeliveryBoundaryCallback2
 import org.kodein.di.Kodein
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.x.androidXModule
@@ -46,10 +46,20 @@ class MyApplication : Application(), KodeinAware {
         //use operator fun in singleton classes mostly act as a constructor
         bind() from singleton { NetworkConnectionInterceptor(instance()) }
         bind() from singleton { ApiService(instance()) }
-        bind() from singleton { AppDatabase(instance()) }
+        bind() from singleton {
+            AppDatabase(
+                instance()
+            )
+        }
         bind() from singleton { DeliveryRepository(instance(), instance(), instance()) }
 
         bind() from provider { DeliveryViewModelFactory(instance()) }
-        bind() from provider { DeliveryBoundaryCallback(instance(), instance()) }
+        //bind() from provider { DeliveryBoundaryCallback(instance(), instance()) }
+        bind() from provider {
+            DeliveryBoundaryCallback2(
+                instance(),
+                instance()
+            )
+        }
     }
 }

@@ -1,4 +1,4 @@
-package com.example.delieverydemo.storage
+package com.example.delieverydemo.storage.db
 
 import android.content.Context
 import androidx.room.Database
@@ -32,8 +32,12 @@ abstract class AppDatabase : RoomDatabase() {
         private var instance: AppDatabase? = null
         private val LOCK = Any()
 
-        operator fun invoke(context: Context) = instance ?: synchronized(LOCK) {
-            instance ?: buildDatabase(context).also {
+        operator fun invoke(context: Context) = instance
+            ?: synchronized(LOCK) {
+            instance
+                ?: buildDatabase(
+                    context
+                ).also {
                 instance = it
             }
         }

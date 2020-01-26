@@ -57,12 +57,12 @@ class DeliveryDetailFragment : Fragment(), View.OnClickListener, KodeinAware {
                             delive_text_view.text = getString(R.string.text_add_to_fav)
                             fav_img_view.setImageResource(R.drawable.img_fav_black)
                             viewModel.setFav(itemData!!)
-                            fragmentManager?.popBackStack()
+                            //fragmentManager?.popBackStack()
                         } else {
                             delive_text_view.text = getString(R.string.text_remove_fav)
                             fav_img_view.setImageResource(R.drawable.img_fav_black_border)
                             viewModel.setFav(itemData!!)
-                            fragmentManager?.popBackStack()
+                           // fragmentManager?.popBackStack()
                         }
                     }
                 }, 100)

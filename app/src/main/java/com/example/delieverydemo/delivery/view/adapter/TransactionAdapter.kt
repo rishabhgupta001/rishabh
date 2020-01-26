@@ -17,8 +17,8 @@ import com.example.delieverydemo.databinding.ItemLayoutTransactionBinding
 import com.example.delieverydemo.databinding.NetworkItemBinding
 import com.example.delieverydemo.delivery.model.DeliveryResponseModel
 import com.example.delieverydemo.delivery.view.DeliveryFragmentDirections
-import com.example.delieverydemo.utils.Pref.TYPE_ITEM
-import com.example.delieverydemo.utils.Pref.TYPE_PROGRESS
+import com.example.delieverydemo.storage.preference.Pref.TYPE_ITEM
+import com.example.delieverydemo.storage.preference.Pref.TYPE_PROGRESS
 import com.example.delieverydemo.utils.Utils
 
 class TransactionAdapter :

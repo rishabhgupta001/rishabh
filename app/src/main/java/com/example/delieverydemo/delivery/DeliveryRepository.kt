@@ -12,8 +12,9 @@ import com.example.delieverydemo.api.NetworkState
 import com.example.delieverydemo.delivery.datasource.NetDeliveryDataSouce
 import com.example.delieverydemo.delivery.datasource.factory.NetDeliveryDataSourceFactory
 import com.example.delieverydemo.delivery.model.DeliveryResponseModel
-import com.example.delieverydemo.storage.AppDatabase
-import com.example.delieverydemo.storage.DeliveryBoundaryCallback
+import com.example.delieverydemo.storage.db.AppDatabase
+import com.example.delieverydemo.storage.db.DeliveryBoundaryCallback
+import com.example.delieverydemo.storage.db.DeliveryBoundaryCallback2
 import com.example.delieverydemo.utils.Constants.LOADING_PAGE_SIZE
 import io.reactivex.Completable
 import io.reactivex.schedulers.Schedulers
@@ -37,13 +38,16 @@ import io.reactivex.schedulers.Schedulers
 class DeliveryRepository(
     private val api: ApiService,
     private val db: AppDatabase,
-    private val boundaryCallback: DeliveryBoundaryCallback
+    private val boundaryCallback2: DeliveryBoundaryCallback2
 ) {
     private var networkState: LiveData<NetworkState> = MutableLiveData()
     private val itemDataSourceFactory = NetDeliveryDataSourceFactory()
     private val liveBoundryCallback = MutableLiveData<DeliveryBoundaryCallback>()
-    private val itemLiveDataSource = MutableLiveData<PagedList.BoundaryCallback<DeliveryResponseModel>>()
+    private val liveBoundryCallback2 = MutableLiveData<DeliveryBoundaryCallback2>()
+    private val itemLiveDataSource =
+        MutableLiveData<PagedList.BoundaryCallback<DeliveryResponseModel>>()
     private val dataSourceDao = MutableLiveData<DataSource.Factory<Int, DeliveryResponseModel>>()
+    private val reloadTrigger = MutableLiveData<Boolean>()
 
     /**
      * A PagedList is just a modified list. It integrates with a DataSource to provide content as
@@ -70,10 +74,10 @@ class DeliveryRepository(
                 dataSourceFactory,
                 pagedListConfig
             )
-                .setBoundaryCallback(boundaryCallback)
+                .setBoundaryCallback(boundaryCallback2)
                 .build()
 
-        liveBoundryCallback.postValue(boundaryCallback)
+        liveBoundryCallback2.postValue(boundaryCallback2)
         dataSourceDao.postValue(dataSourceFactory)
 
         return livePageListBuilder
@@ -118,14 +122,13 @@ class DeliveryRepository(
 
     fun getPageLoadingState2(): MutableLiveData<NetworkState> {
         networkState = Transformations.switchMap(
-            liveBoundryCallback,
-            DeliveryBoundaryCallback::networkState
+            liveBoundryCallback2,
+            DeliveryBoundaryCallback2::networkState
         )
         return networkState as MutableLiveData<NetworkState>
     }
 
     fun stopLoadingAndRefresh2() {
-        (dataSourceDao as DataSource<Int, DeliveryResponseModel>).invalidate()
     }
 
 }

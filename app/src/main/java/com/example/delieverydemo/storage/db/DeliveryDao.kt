@@ -1,4 +1,4 @@
-package com.example.delieverydemo.storage
+package com.example.delieverydemo.storage.db
 
 import androidx.paging.DataSource
 import androidx.room.*

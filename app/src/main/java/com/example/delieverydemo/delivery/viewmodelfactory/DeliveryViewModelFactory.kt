@@ -2,7 +2,7 @@ package com.example.delieverydemo.delivery.viewmodelfactory
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.example.delieverydemo.delivery.DeliveryRepository
+import com.example.delieverydemo.data.repositories.DeliveryRepository
 import com.example.delieverydemo.delivery.viewmodel.DeliveryViewModel
 
 @Suppress("UNCHECKED_CAST")

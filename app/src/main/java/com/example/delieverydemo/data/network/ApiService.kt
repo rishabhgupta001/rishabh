@@ -1,4 +1,4 @@
-package com.example.delieverydemo.api
+package com.example.delieverydemo.data.network
 
 import com.example.delieverydemo.delivery.model.DeliveryResponseModel
 import com.example.delieverydemo.utils.Constants

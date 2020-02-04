@@ -11,14 +11,14 @@ import androidx.paging.PagedListAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.example.delieverydemo.R
-import com.example.delieverydemo.api.NetworkState
-import com.example.delieverydemo.api.StatusCode
+import com.example.delieverydemo.data.network.NetworkState
+import com.example.delieverydemo.data.network.StatusCode
 import com.example.delieverydemo.databinding.ItemLayoutTransactionBinding
 import com.example.delieverydemo.databinding.NetworkItemBinding
 import com.example.delieverydemo.delivery.model.DeliveryResponseModel
 import com.example.delieverydemo.delivery.view.DeliveryFragmentDirections
-import com.example.delieverydemo.storage.preference.Pref.TYPE_ITEM
-import com.example.delieverydemo.storage.preference.Pref.TYPE_PROGRESS
+import com.example.delieverydemo.utils.Constants.TYPE_ITEM
+import com.example.delieverydemo.utils.Constants.TYPE_PROGRESS
 import com.example.delieverydemo.utils.Utils
 
 class TransactionAdapter :

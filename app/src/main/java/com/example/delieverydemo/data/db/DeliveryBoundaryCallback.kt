@@ -1,12 +1,12 @@
-package com.example.delieverydemo.storage.db
+package com.example.delieverydemo.data.db
 
 import android.annotation.SuppressLint
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.paging.PagedList
-import com.example.delieverydemo.api.ApiService
-import com.example.delieverydemo.api.NetworkState
-import com.example.delieverydemo.api.StatusCode
+import com.example.delieverydemo.data.network.ApiService
+import com.example.delieverydemo.data.network.NetworkState
+import com.example.delieverydemo.data.network.StatusCode
 import com.example.delieverydemo.delivery.model.DeliveryResponseModel
 import com.example.delieverydemo.utils.Constants.LOADING_PAGE_SIZE
 import io.reactivex.Completable

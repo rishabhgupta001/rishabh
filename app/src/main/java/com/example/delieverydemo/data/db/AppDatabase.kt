@@ -1,4 +1,4 @@
-package com.example.delieverydemo.storage.db
+package com.example.delieverydemo.data.db
 
 import android.content.Context
 import androidx.room.Database

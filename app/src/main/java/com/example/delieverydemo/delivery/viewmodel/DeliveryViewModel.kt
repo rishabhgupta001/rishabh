@@ -1,11 +1,9 @@
 package com.example.delieverydemo.delivery.viewmodel
 
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Transformations
 import androidx.lifecycle.ViewModel
-import androidx.paging.PagedList
-import com.example.delieverydemo.api.NetworkState
-import com.example.delieverydemo.delivery.DeliveryRepository
+import com.example.delieverydemo.data.repositories.DeliveryRepository
 import com.example.delieverydemo.delivery.model.DeliveryResponseModel
 
 
@@ -24,17 +22,33 @@ import com.example.delieverydemo.delivery.model.DeliveryResponseModel
 
 class DeliveryViewModel(val repository: DeliveryRepository) : ViewModel() {
 
-    fun getDeliveryList(): LiveData<PagedList<DeliveryResponseModel>> = repository.getPagedList()
-
-    //fun getNetworkState(): MutableLiveData<NetworkState> = repository.getPageLoadingState()
-    fun getNetworkState(): MutableLiveData<NetworkState> = repository.getPageLoadingState2()
+    val subDeliveryName = MutableLiveData<String>()
+    //map:- everytime the value of subDelivery changes, repoResult will be updated too. (Here)
+    val repoResult = Transformations.map(subDeliveryName, { _ -> repository.postOfDelivery() })
 
     /**
-     * Method to Signal the data source to stop loading, and notify its callback
+     * SwitchMap:- everytime the value of repoResult changes, it.pagedList will be called,
+     * just like the map function. But it.pagedList returns a LiveData. So everytime that
+     * the value of the LiveData returned by it.pagedList changes, the value of post
+     * will change too. So the value of post will depend on changes of repoResult and changes of
+     * the value of it.pagedList.
      */
-   // fun onSwipeRefrenh() = repository.stopLoadingAndRefresh()
-    fun onSwipeRefrenh() = repository.stopLoadingAndRefresh2()
+    val post = Transformations.switchMap(repoResult, { it.pagedList })
+    val networkState = Transformations.switchMap(repoResult, { it.networkState })
+    val refreshState = Transformations.switchMap(repoResult, { it.refreshState })
 
+    /**
+     * On Pull to Refresh from Ui
+     */
+    fun refresh() {
+        repoResult.value?.refresh?.invoke()
+    }
+
+    fun retry() {
+        repoResult.value?.retry?.invoke()
+    }
+
+    fun getCurrentSubDelivery() = repoResult.value
 
     /**
      * Method add favourite item of Delivery List  into db
@@ -43,6 +57,15 @@ class DeliveryViewModel(val repository: DeliveryRepository) : ViewModel() {
      */
     fun setFav(itemData: DeliveryResponseModel) {
         repository.setFavInDb(itemData)
+    }
+
+    fun showSubdelivery(subDelivery: String): Boolean {
+        if (subDeliveryName.value == subDelivery)
+            return false
+        else {
+            subDeliveryName.value = subDelivery
+            return true
+        }
     }
 
 

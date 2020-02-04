@@ -12,18 +12,12 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.delieverydemo.MainActivity
 import com.example.delieverydemo.R
-import com.example.delieverydemo.api.NetworkState
-import com.example.delieverydemo.api.StatusCode
+import com.example.delieverydemo.data.network.NetworkState
 import com.example.delieverydemo.databinding.FragmentDeliveryBinding
 import com.example.delieverydemo.delivery.view.adapter.TransactionAdapter
 import com.example.delieverydemo.delivery.viewmodel.DeliveryViewModel
 import com.example.delieverydemo.delivery.viewmodelfactory.DeliveryViewModelFactory
-import com.example.delieverydemo.utils.hide
-import com.example.delieverydemo.utils.show
-import com.example.delieverydemo.utils.toastShort
-import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_delivery.*
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.x.kodein
@@ -78,7 +72,8 @@ class DeliveryFragment : Fragment(), KodeinAware {
     private fun init() {
         setUpRecyclerViewData()
         observeNetworkState()
-        swipeRefresh()
+        initSwipeRefresh()
+        viewModel.showSubdelivery("a")
     }
 
     /**
@@ -90,14 +85,14 @@ class DeliveryFragment : Fragment(), KodeinAware {
             LinearLayoutManager(context, RecyclerView.VERTICAL, false)
         transactionAdapter = TransactionAdapter()
 
-        viewModel.getDeliveryList().observe(this, Observer { pagedList ->
+        //get Page List
+        viewModel.post.observe(this, Observer { pagedList ->
             //submitList is another special PagedListAdapter method that
             // feeds a PagedList into the adapter and automatically starts the loading process.
 
             //The PagedListAdapter is now receiving a PagedList, which,
             // in turn, is calling into the DataSource to generate new items.
             transactionAdapter.submitList(pagedList)
-            swipeRefresh.isRefreshing = false
         })
     }
 
@@ -106,29 +101,10 @@ class DeliveryFragment : Fragment(), KodeinAware {
      */
     private fun observeNetworkState() {
         //get the Network state (on hitting api respone success,error an all..)
-        viewModel.getNetworkState().observe(this,
+        viewModel.networkState.observe(this,
             Observer<NetworkState> { networkState ->
                 //show loader inside adapter row via Network Status
                 transactionAdapter.setNetworkState(networkState!!)
-                when (networkState.statusCode) {
-                    StatusCode.NETWORK_ERROR -> {
-                        (activity as MainActivity).progress_bar.hide()
-                        context?.toastShort(getString(R.string.text_make_sure_no_data_connection))
-                    }
-                    StatusCode.START -> {
-                        //by default progress visibility is gone in xml view
-                        (activity as MainActivity).progress_bar.show()
-                    }
-                    StatusCode.SUCCESS -> {
-                        (activity as MainActivity).progress_bar.hide()
-
-                    }
-                    StatusCode.ERROR -> {
-                        (activity as MainActivity).progress_bar.hide()
-                        context?.toastShort(networkState.msg)
-                    }
-
-                }
             })
 
         deliveries_recycler_view.adapter = transactionAdapter
@@ -137,10 +113,13 @@ class DeliveryFragment : Fragment(), KodeinAware {
     /**
      * Method to handle pull to refresh functionality
      */
-    private fun swipeRefresh() {
+    private fun initSwipeRefresh() {
+        viewModel.refreshState.observe(this, Observer {
+            swipeRefresh.isRefreshing = it == NetworkState.START
+        })
+
         swipeRefresh.setOnRefreshListener {
-            (activity as MainActivity).progress_bar.show()
-            viewModel.onSwipeRefrenh()
+            viewModel.refresh()
         }
     }
 

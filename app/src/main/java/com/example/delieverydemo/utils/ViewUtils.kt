@@ -6,8 +6,8 @@ import android.widget.ProgressBar
 import android.widget.Toast
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.example.delieverydemo.api.NetworkState
-import com.example.delieverydemo.api.StatusCode
+import com.example.delieverydemo.data.network.NetworkState
+import com.example.delieverydemo.data.network.StatusCode
 
 fun Context.toastShort(msg: String) {
     Toast.makeText(this, msg, Toast.LENGTH_SHORT).show()

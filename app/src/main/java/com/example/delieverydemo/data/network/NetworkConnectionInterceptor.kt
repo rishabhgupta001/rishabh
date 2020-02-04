@@ -1,4 +1,4 @@
-package com.example.delieverydemo.api
+package com.example.delieverydemo.data.network
 
 import android.content.Context
 import android.net.ConnectivityManager

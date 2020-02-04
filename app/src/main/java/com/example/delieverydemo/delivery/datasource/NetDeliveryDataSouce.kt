@@ -3,10 +3,10 @@ package com.example.delieverydemo.delivery.datasource
 import android.annotation.SuppressLint
 import androidx.lifecycle.MutableLiveData
 import androidx.paging.PageKeyedDataSource
-import com.example.delieverydemo.api.ApiService
-import com.example.delieverydemo.api.NetworkState
-import com.example.delieverydemo.api.StatusCode
 import com.example.delieverydemo.application.MyApplication
+import com.example.delieverydemo.data.network.ApiService
+import com.example.delieverydemo.data.network.NetworkState
+import com.example.delieverydemo.data.network.StatusCode
 import com.example.delieverydemo.delivery.model.DeliveryResponseModel
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
@@ -111,9 +111,9 @@ class NetDeliveryDataSouce :
 
 import androidx.lifecycle.MutableLiveData
 import androidx.paging.PageKeyedDataSource
-import com.example.delieverydemo.api.ApiService
-import com.example.delieverydemo.api.NetworkState
-import com.example.delieverydemo.api.StatusCode
+import com.example.delieverydemo.data.api.ApiService
+import com.example.delieverydemo.data.api.NetworkState
+import com.example.delieverydemo.data.api.StatusCode
 import com.example.delieverydemo.application.MyApplication
 import com.example.delieverydemo.delievery.model.DeliveryResponseModel
 import org.kodein.di.Kodein

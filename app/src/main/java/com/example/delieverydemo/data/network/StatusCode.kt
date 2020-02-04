@@ -1,4 +1,4 @@
-package com.example.delieverydemo.api
+package com.example.delieverydemo.data.network
 
 enum class StatusCode {
     START,

@@ -1,17 +1,19 @@
-package com.example.delieverydemo.storage.db
+package com.example.delieverydemo.data.db
 
 import android.annotation.SuppressLint
 import android.util.Log
 import androidx.paging.PagedList
-import com.example.delieverydemo.api.ApiService
+import com.example.delieverydemo.data.network.ApiService
+import com.example.delieverydemo.data.preference.NEXT_OFFSET_COUNT
+import com.example.delieverydemo.data.preference.Pref
 import com.example.delieverydemo.delivery.model.DeliveryResponseModel
+import com.example.delieverydemo.utils.AppExecutor
 import com.example.delieverydemo.utils.Constants.LOADING_PAGE_SIZE
 import com.example.delieverydemo.utils.PagingRequestHelper
 import com.example.delieverydemo.utils.createStatusLiveData
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
-import java.util.concurrent.Executors
 
 /**
  * PagedList :- A PagedList is a version of a List that loads content in chunks.
@@ -19,18 +21,24 @@ import java.util.concurrent.Executors
  * as content is loaded in future passes. The size of PagedList is the number of items loaded
  * during each pass. The class supports both infinite lists and very large lists with a fixed
  * number of elements.
+ *
+ *  create a boundary callback which will observe when the user reaches to the edges of
+ *  the list and update the database with extra data.
  */
-class DeliveryBoundaryCallback2(private val apiService: ApiService, private val db: AppDatabase) :
-    PagedList.BoundaryCallback<DeliveryResponseModel>() {
+class DeliveryBoundaryCallback2(
+    private val apiService: ApiService,
+    private val db: AppDatabase,
+    private val pref: Pref,
+    private val executor: AppExecutor
+) : PagedList.BoundaryCallback<DeliveryResponseModel>() {
 
     private val TAG = DeliveryBoundaryCallback2::class.java.simpleName
     private var disposable = CompositeDisposable()
     //to determine what thread to use when running the network and database tasks.
-    private val executor = Executors.newSingleThreadExecutor()
-    private val helper = PagingRequestHelper(executor)
+    val helper = PagingRequestHelper(executor.diskIo)
     val networkState = helper.createStatusLiveData()
-    private var totalCount: Int = 0
     private var isLoaded: Boolean = false
+    private var isRefreshed = false
 
 
     /**
@@ -42,21 +50,7 @@ class DeliveryBoundaryCallback2(private val apiService: ApiService, private val 
         super.onZeroItemsLoaded()
         Log.d(TAG, "onZeroItemsLoaded called")
         helper.runIfNotRunning(PagingRequestHelper.RequestType.INITIAL) { helperCallback ->
-
-            val observable = apiService.getDeliveryList(LOADING_PAGE_SIZE, 0)
-            disposable.add(
-                observable.subscribeOn(Schedulers.io())
-                    .doOnSubscribe {
-                    }
-                    .observeOn(AndroidSchedulers.mainThread())
-                    //below code is working on Main thread
-                    .subscribe(
-                        { sucess ->
-                            success(helperCallback, sucess)
-                        }, { error ->
-                            handleError(helperCallback, error)
-                        })
-            )
+            fetchDelivery(helperCallback, 0)
         }
     }
 
@@ -66,28 +60,37 @@ class DeliveryBoundaryCallback2(private val apiService: ApiService, private val 
     override fun onItemAtEndLoaded(itemAtEnd: DeliveryResponseModel) {
         super.onItemAtEndLoaded(itemAtEnd)
         Log.d(TAG, "onItemAtEndLoaded called")
-        Log.d(TAG, "onItemAtEndLoaded total count $totalCount")
+        Log.d(
+            TAG, "onItemAtEndLoaded total count ${pref.getInt(
+                NEXT_OFFSET_COUNT
+            )}"
+        )
         if (!isLoaded) {
             Log.d(TAG, "onItemAtEndLoaded total isloaded $isLoaded")
             helper.runIfNotRunning(PagingRequestHelper.RequestType.AFTER) { helperCallback ->
-                val observable = apiService.getDeliveryList(LOADING_PAGE_SIZE, totalCount)
-                disposable.add(
-                    observable.subscribeOn(Schedulers.io())
-                        .doOnSubscribe {
-                        }
-                        .observeOn(AndroidSchedulers.mainThread())
-                        //below code is working on Main thread
-                        .subscribe(
-                            { sucess ->
-                                success(helperCallback, sucess)
-                            }, { error ->
-                                handleError(helperCallback, error)
-                            })
-                )
+                fetchDelivery(helperCallback, pref.getInt(NEXT_OFFSET_COUNT))
             }
-
         }
+    }
 
+    private fun fetchDelivery(
+        helperCallback: PagingRequestHelper.Request.Callback,
+        offset: Int
+    ) {
+        val observable = apiService.getDeliveryList(LOADING_PAGE_SIZE, offset)
+        disposable.add(
+            observable.subscribeOn(Schedulers.io())
+                .doOnSubscribe {
+                }
+                .observeOn(AndroidSchedulers.mainThread())
+                //below code is working on Main thread
+                .subscribe(
+                    { sucess ->
+                        success(helperCallback, sucess)
+                    }, { error ->
+                        handleError(helperCallback, error)
+                    })
+        )
 
     }
 
@@ -98,19 +101,14 @@ class DeliveryBoundaryCallback2(private val apiService: ApiService, private val 
     ) {
         if (data.size > 0) {
             Log.d(TAG, "fetchDelivery success loading")
-           // Pref.setInt(app) = data.size
-            if (data.size < LOADING_PAGE_SIZE) {
-                isLoaded = true
-                Log.d(TAG, "fetchDelivery success item less than LOADING_PAGE_SIZE")
-            } else {
-                Log.d(TAG, "fetchDelivery success item more than than LOADING_PAGE_SIZE")
-            }
+            pref.setInt(NEXT_OFFSET_COUNT, pref.getInt(NEXT_OFFSET_COUNT) + data.size)
 
             /*Completable.complete().subscribeOn(Schedulers.io())
                 //currently below code is running on Schedulers.io() thread
                 .subscribe { db.getDeliveryDao().insertAll(data) }*/
 
-            executor.execute {
+            insertDataIntoDb(data)
+            executor.diskIo.execute {
                 db.getDeliveryDao().insertAll(data)
                 helperCallback.recordSuccess()
             }
@@ -127,6 +125,14 @@ class DeliveryBoundaryCallback2(private val apiService: ApiService, private val 
     ) {
         helperCallback.recordFailure(throwable)
         Log.d(TAG, "fetch delivery Error  ${throwable.message}")
+    }
+
+    /**
+     * every time it gets new items, boundary callback simply inserts them into the database and
+     * paging library takes care of refreshing the list if necessary.
+     */
+    private fun insertDataIntoDb(data: ArrayList<DeliveryResponseModel>) {
+
     }
 
 }

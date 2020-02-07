@@ -1,4 +1,4 @@
-package com.example.delieverydemo.data.db
+package com.example.delieverydemo.data.repositories
 
 import android.annotation.SuppressLint
 import android.util.Log
@@ -6,7 +6,7 @@ import androidx.paging.PagedList
 import com.example.delieverydemo.data.network.ApiService
 import com.example.delieverydemo.data.preference.NEXT_OFFSET_COUNT
 import com.example.delieverydemo.data.preference.Pref
-import com.example.delieverydemo.delivery.model.DeliveryResponseModel
+import com.example.delieverydemo.ui.delivery.model.DeliveryResponseModel
 import com.example.delieverydemo.utils.AppExecutor
 import com.example.delieverydemo.utils.Constants.LOADING_PAGE_SIZE
 import com.example.delieverydemo.utils.PagingRequestHelper
@@ -25,20 +25,19 @@ import io.reactivex.schedulers.Schedulers
  *  create a boundary callback which will observe when the user reaches to the edges of
  *  the list and update the database with extra data.
  */
-class DeliveryBoundaryCallback2(
+class DeliveryBoundaryCallback(
     private val apiService: ApiService,
-    private val db: AppDatabase,
     private val pref: Pref,
-    private val executor: AppExecutor
+    private val executor: AppExecutor,
+    private val handleResponse: (List<DeliveryResponseModel>) -> Unit
 ) : PagedList.BoundaryCallback<DeliveryResponseModel>() {
 
-    private val TAG = DeliveryBoundaryCallback2::class.java.simpleName
+    private val TAG = DeliveryBoundaryCallback::class.java.simpleName
     private var disposable = CompositeDisposable()
     //to determine what thread to use when running the network and database tasks.
     val helper = PagingRequestHelper(executor.diskIo)
     val networkState = helper.createStatusLiveData()
-    private var isLoaded: Boolean = false
-    private var isRefreshed = false
+    private var isNotLoaded: Boolean = true
 
 
     /**
@@ -65,8 +64,8 @@ class DeliveryBoundaryCallback2(
                 NEXT_OFFSET_COUNT
             )}"
         )
-        if (!isLoaded) {
-            Log.d(TAG, "onItemAtEndLoaded total isloaded $isLoaded")
+        if (isNotLoaded) {
+            Log.d(TAG, "onItemAtEndLoaded total isNotLoaded $isNotLoaded")
             helper.runIfNotRunning(PagingRequestHelper.RequestType.AFTER) { helperCallback ->
                 fetchDelivery(helperCallback, pref.getInt(NEXT_OFFSET_COUNT))
             }
@@ -97,7 +96,7 @@ class DeliveryBoundaryCallback2(
     @SuppressLint("CheckResult")
     private fun success(
         helperCallback: PagingRequestHelper.Request.Callback,
-        data: ArrayList<DeliveryResponseModel>
+        data: List<DeliveryResponseModel>
     ) {
         if (data.size > 0) {
             Log.d(TAG, "fetchDelivery success loading")
@@ -107,14 +106,17 @@ class DeliveryBoundaryCallback2(
                 //currently below code is running on Schedulers.io() thread
                 .subscribe { db.getDeliveryDao().insertAll(data) }*/
 
-            insertDataIntoDb(data)
+            /* executor.diskIo.execute {
+                 db.getDeliveryDao().insertAll(data)
+                 helperCallback.recordSuccess()
+             }*/
+
             executor.diskIo.execute {
-                db.getDeliveryDao().insertAll(data)
+                handleResponse(data)
                 helperCallback.recordSuccess()
             }
-
         } else {
-            isLoaded = true
+            isNotLoaded = false
             Log.d(TAG, "fetchDelivery success No data found")
         }
     }
@@ -125,14 +127,6 @@ class DeliveryBoundaryCallback2(
     ) {
         helperCallback.recordFailure(throwable)
         Log.d(TAG, "fetch delivery Error  ${throwable.message}")
-    }
-
-    /**
-     * every time it gets new items, boundary callback simply inserts them into the database and
-     * paging library takes care of refreshing the list if necessary.
-     */
-    private fun insertDataIntoDb(data: ArrayList<DeliveryResponseModel>) {
-
     }
 
 }

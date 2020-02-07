@@ -1,4 +1,4 @@
-package com.example.delieverydemo.data.repositories
+package com.example.delieverydemo.ui.delivery.model
 
 import androidx.lifecycle.LiveData
 import androidx.paging.PagedList
@@ -16,7 +16,7 @@ import com.example.delieverydemo.data.network.NetworkState
  * Modified on January 28, 2020
  *
  * */
-data class Listing<T>(
+data class ListingDataModel<T>(
     // the LiveData of paged lists for the UI to observe into Recyclerview
     val pagedList: LiveData<PagedList<T>>,
     //represent network request status

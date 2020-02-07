@@ -1,4 +1,4 @@
-package com.example.delieverydemo.delivery.view
+package com.example.delieverydemo.ui.delivery.view
 
 
 import android.annotation.SuppressLint
@@ -12,9 +12,9 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
 import com.example.delieverydemo.R
 import com.example.delieverydemo.databinding.FragmentDeliveryDetailBinding
-import com.example.delieverydemo.delivery.model.DeliveryResponseModel
-import com.example.delieverydemo.delivery.viewmodel.DeliveryViewModel
-import com.example.delieverydemo.delivery.viewmodelfactory.DeliveryViewModelFactory
+import com.example.delieverydemo.ui.delivery.model.DeliveryResponseModel
+import com.example.delieverydemo.ui.delivery.viewmodel.DeliveryViewModel
+import com.example.delieverydemo.ui.delivery.viewmodelfactory.DeliveryViewModelFactory
 import com.example.delieverydemo.utils.Utils
 import kotlinx.android.synthetic.main.fragment_delivery_detail.*
 import org.kodein.di.KodeinAware

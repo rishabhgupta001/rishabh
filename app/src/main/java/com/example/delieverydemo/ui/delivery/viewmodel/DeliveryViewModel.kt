@@ -1,10 +1,10 @@
-package com.example.delieverydemo.delivery.viewmodel
+package com.example.delieverydemo.ui.delivery.viewmodel
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
 import androidx.lifecycle.ViewModel
 import com.example.delieverydemo.data.repositories.DeliveryRepository
-import com.example.delieverydemo.delivery.model.DeliveryResponseModel
+import com.example.delieverydemo.ui.delivery.model.DeliveryResponseModel
 
 
 /**
@@ -48,7 +48,7 @@ class DeliveryViewModel(val repository: DeliveryRepository) : ViewModel() {
         repoResult.value?.retry?.invoke()
     }
 
-    fun getCurrentSubDelivery() = repoResult.value
+    fun getCurrentSubDelivery(): String? = subDeliveryName.value
 
     /**
      * Method add favourite item of Delivery List  into db
@@ -67,6 +67,5 @@ class DeliveryViewModel(val repository: DeliveryRepository) : ViewModel() {
             return true
         }
     }
-
 
 }

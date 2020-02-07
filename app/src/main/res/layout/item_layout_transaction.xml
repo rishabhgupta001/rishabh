@@ -7,7 +7,7 @@
         <import type="android.view.View"/>
         <variable
             name="data"
-            type="com.example.delieverydemo.delivery.model.DeliveryResponseModel" />
+            type="com.example.delieverydemo.ui.delivery.model.DeliveryResponseModel" />
     </data>
 
     <androidx.cardview.widget.CardView

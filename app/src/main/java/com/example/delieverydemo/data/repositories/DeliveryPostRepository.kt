@@ -1,6 +1,7 @@
 package com.example.delieverydemo.data.repositories
 
-import com.example.delieverydemo.delivery.model.DeliveryResponseModel
+import com.example.delieverydemo.ui.delivery.model.DeliveryResponseModel
+import com.example.delieverydemo.ui.delivery.model.ListingDataModel
 
 /**
  *
@@ -17,5 +18,5 @@ import com.example.delieverydemo.delivery.model.DeliveryResponseModel
 
 interface DeliveryPostRepository {
 
-    fun postOfDelivery(): Listing<DeliveryResponseModel>
+    fun postOfDelivery(): ListingDataModel<DeliveryResponseModel>
 }

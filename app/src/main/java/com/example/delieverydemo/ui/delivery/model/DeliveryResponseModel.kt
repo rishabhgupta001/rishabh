@@ -1,4 +1,4 @@
-package com.example.delieverydemo.delivery.model
+package com.example.delieverydemo.ui.delivery.model
 
 import android.os.Parcelable
 import androidx.room.Embedded
@@ -14,6 +14,7 @@ import java.text.DecimalFormat
  * Immutable model class for a delivery and entity in the Room database.
  */
 
+
 @Parcelize
 @Entity(tableName = "delivery")
 data class DeliveryResponseModel(
@@ -24,13 +25,15 @@ data class DeliveryResponseModel(
     val pickupTime: String = "",
     val remarks: String = "",
     val surcharge: String = "",
-    var error: String = "",
     @Embedded
     val route: Route? = null,
     @Embedded
     val sender: Sender? = null,
     //not comoing from Api
-    var isFavourite: Boolean = false
+    var isFavourite: Boolean = false,
+    //not comoing from Api
+    var indexInResonse: Int = -1
+
 ) : Parcelable {
 
     val price: String
@@ -43,9 +46,7 @@ data class DeliveryResponseModel(
             val amount = df.format(
                 (deliveryFee.removePrefix(CURRENCY).toFloat()) + (surcharge.removePrefix(CURRENCY).toFloat())
             )
-
             //https://www.baeldung.com/kotlin-concatenate-strings  for concatenation
             return CURRENCY.plus(amount)
         }
-
 }

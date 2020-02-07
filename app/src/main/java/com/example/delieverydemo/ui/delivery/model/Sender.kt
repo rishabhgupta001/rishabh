@@ -1,4 +1,4 @@
-package com.example.delieverydemo.delivery.model
+package com.example.delieverydemo.ui.delivery.model
 
 import android.os.Parcelable
 import kotlinx.android.parcel.Parcelize

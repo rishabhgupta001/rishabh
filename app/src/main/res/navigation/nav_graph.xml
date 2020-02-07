@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/delivery_frag"
-        android:name="com.example.delieverydemo.delivery.view.DeliveryFragment"
+        android:name="com.example.delieverydemo.ui.delivery.view.DeliveryFragment"
         android:label="@string/text_my_deliveries"
         tools:layout="@layout/fragment_delivery">
 
@@ -22,13 +22,13 @@
 
     <fragment
         android:id="@+id/delivery_detail_frag"
-        android:name="com.example.delieverydemo.delivery.view.DeliveryDetailFragment"
+        android:name="com.example.delieverydemo.ui.delivery.view.DeliveryDetailFragment"
         android:label="@string/text_delivery_details"
         tools:layout="@layout/fragment_delivery_detail">
         <argument
             android:name="DeliveryResponseModel"
             android:defaultValue="@null"
-            app:argType="com.example.delieverydemo.delivery.model.DeliveryResponseModel"
+            app:argType="com.example.delieverydemo.ui.delivery.model.DeliveryResponseModel"
             app:nullable="true" />
     </fragment>
 

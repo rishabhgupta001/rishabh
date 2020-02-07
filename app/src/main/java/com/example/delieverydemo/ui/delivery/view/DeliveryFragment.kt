@@ -1,4 +1,4 @@
-package com.example.delieverydemo.delivery.view
+package com.example.delieverydemo.ui.delivery.view
 
 
 import android.graphics.Color
@@ -15,9 +15,11 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.delieverydemo.R
 import com.example.delieverydemo.data.network.NetworkState
 import com.example.delieverydemo.databinding.FragmentDeliveryBinding
-import com.example.delieverydemo.delivery.view.adapter.TransactionAdapter
-import com.example.delieverydemo.delivery.viewmodel.DeliveryViewModel
-import com.example.delieverydemo.delivery.viewmodelfactory.DeliveryViewModelFactory
+import com.example.delieverydemo.ui.delivery.view.adapter.TransactionAdapter
+import com.example.delieverydemo.ui.delivery.viewmodel.DeliveryViewModel
+import com.example.delieverydemo.ui.delivery.viewmodelfactory.DeliveryViewModelFactory
+import com.example.delieverydemo.utils.Constants.DEFAULT_SUBDELIVERY
+import com.example.delieverydemo.utils.Constants.KEY_SUBDELIVERY
 import kotlinx.android.synthetic.main.fragment_delivery.*
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.x.kodein
@@ -62,18 +64,19 @@ class DeliveryFragment : Fragment(), KodeinAware {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        init()
+        init(savedInstanceState)
     }
 
 
     /**
      * initial setUp
      */
-    private fun init() {
+    private fun init(savedInstanceState: Bundle?) {
         setUpRecyclerViewData()
         observeNetworkState()
         initSwipeRefresh()
-        viewModel.showSubdelivery("a")
+        val subDelivery = savedInstanceState?.getString(KEY_SUBDELIVERY) ?: DEFAULT_SUBDELIVERY
+        viewModel.showSubdelivery(subDelivery)
     }
 
     /**
@@ -121,6 +124,11 @@ class DeliveryFragment : Fragment(), KodeinAware {
         swipeRefresh.setOnRefreshListener {
             viewModel.refresh()
         }
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putString(KEY_SUBDELIVERY, viewModel.getCurrentSubDelivery())
     }
 
 }

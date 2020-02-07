@@ -1,6 +1,6 @@
 package com.example.delieverydemo.data.network
 
-import com.example.delieverydemo.delivery.model.DeliveryResponseModel
+import com.example.delieverydemo.ui.delivery.model.DeliveryResponseModel
 import com.example.delieverydemo.utils.Constants
 import io.reactivex.Observable
 import okhttp3.OkHttpClient
@@ -38,7 +38,7 @@ interface ApiService {
     fun getDeliveryList(
         @Query("limit") limit: Int,
         @Query("offset") offset: Int
-    ): Observable<ArrayList<DeliveryResponseModel>>
+    ): Observable<List<DeliveryResponseModel>>
 
     /*@GET("v2/deliveries")
     //query needed if there is any query

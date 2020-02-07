@@ -1,19 +1,19 @@
 package com.example.delieverydemo.data.repositories
 
 import android.annotation.SuppressLint
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
-import androidx.paging.DataSource
 import androidx.paging.LivePagedListBuilder
 import androidx.paging.PagedList
 import com.example.delieverydemo.data.db.AppDatabase
-import com.example.delieverydemo.data.db.DeliveryBoundaryCallback2
 import com.example.delieverydemo.data.network.ApiService
 import com.example.delieverydemo.data.network.NetworkState
 import com.example.delieverydemo.data.preference.NEXT_OFFSET_COUNT
 import com.example.delieverydemo.data.preference.Pref
-import com.example.delieverydemo.delivery.model.DeliveryResponseModel
+import com.example.delieverydemo.ui.delivery.model.DeliveryResponseModel
+import com.example.delieverydemo.ui.delivery.model.ListingDataModel
 import com.example.delieverydemo.utils.AppExecutor
 import com.example.delieverydemo.utils.Constants.LOADING_PAGE_SIZE
 import io.reactivex.Completable
@@ -39,54 +39,11 @@ import io.reactivex.schedulers.Schedulers
 class DeliveryRepository(
     private val api: ApiService,
     private val db: AppDatabase,
-    private val boundaryCallback2: DeliveryBoundaryCallback2,
     private val executor: AppExecutor,
     private val pref: Pref
 ) : DeliveryPostRepository {
-    private val liveBoundryCallback2 = MutableLiveData<DeliveryBoundaryCallback2>()
-    private val dataSourceDao = MutableLiveData<DataSource.Factory<Int, DeliveryResponseModel>>()
-
-
-    /**
-     * A PagedList is just a modified list. It integrates with a DataSource to provide content as
-    items in the list get consumed. As whoever is accessing items on the PagedList begins to
-    approach the bottom of the list, it will delegate off to its DataSource to fetch new items.
-     */
-    fun getPagedList(): LiveData<PagedList<DeliveryResponseModel>> {
-        val dataSourceFactory = db.getDeliveryDao().getAllDelivery()
-
-        //controls how many items the DataSource will attempt to fetch
-        val pagedListConfig = PagedList.Config.Builder()
-            .setEnablePlaceholders(false)
-            .setPageSize(LOADING_PAGE_SIZE)
-            .build()
-
-
-        /**
-         * This method takes in the config you defined above and DataSource(Here db.getDeliveryDao().getAllDelivery()),
-         * and returns LivePagedListBuilder to build the LiveData.
-        You’re observing the same LiveData and submitting the value it emits via the submitList method(in fragment/Activity).
-         */
-        val livePageListBuilder =
-            LivePagedListBuilder<Int, DeliveryResponseModel>(
-                dataSourceFactory,
-                pagedListConfig
-            )
-                .setBoundaryCallback(boundaryCallback2)
-                .build()
-
-        liveBoundryCallback2.postValue(boundaryCallback2)
-        dataSourceDao.postValue(dataSourceFactory)
-
-        return livePageListBuilder
-
-        /*----------------------*/
-
-        /*val livePageListBuilder = LivePagedListBuilder(itemDataSourceFactory, pagedListConfig)
-            .build()
-
-        return livePageListBuilder*/
-    }
+    private lateinit var boundaryCallback: DeliveryBoundaryCallback
+    private val TAG = DeliveryRepository::class.java.simpleName
 
     /**
      * Method add favourite item of Delivery List into db
@@ -101,7 +58,20 @@ class DeliveryRepository(
         }
     }
 
-    override fun postOfDelivery(): Listing<DeliveryResponseModel> {
+    override fun postOfDelivery(): ListingDataModel<DeliveryResponseModel> {
+        boundaryCallback =
+            DeliveryBoundaryCallback(
+                api,
+                pref,
+                executor,
+                ::insertDataIntoDb
+            )
+
+        /**
+         * A PagedList is just a modified list. It integrates with a DataSource to provide content as
+        items in the list get consumed. As whoever is accessing items on the PagedList begins to
+        approach the bottom of the list, it will delegate off to its DataSource to fetch new items.
+         */
         //controls how many items the DataSource will attempt to fetch
         val pagedListConfig = PagedList.Config.Builder()
             .setEnablePlaceholders(false)
@@ -124,16 +94,16 @@ class DeliveryRepository(
                 db.getDeliveryDao().getAllDelivery(),
                 pagedListConfig
             )
-                .setBoundaryCallback(boundaryCallback2)
+                .setBoundaryCallback(boundaryCallback)
                 .build()
 
 
-        return Listing(
+        return ListingDataModel(
             pagedList = livePageList,
-            networkState = boundaryCallback2.networkState,
+            networkState = boundaryCallback.networkState,
             refreshState = refreshState,
             refresh = { refreshTrigger.value = null },
-            retry = { boundaryCallback2.helper.retryAllFailed() }
+            retry = { boundaryCallback.helper.retryAllFailed() }
         )
     }
 
@@ -157,11 +127,16 @@ class DeliveryRepository(
                 executor.diskIo.execute {
                     db.runInTransaction {
                         db.getDeliveryDao().deleteAllMovies()
-                        db.getDeliveryDao().insertAll(success)
+                        // db.getDeliveryDao().insertAll(success)
+                        if (success.size > 0) {
+                            pref.setInt(NEXT_OFFSET_COUNT, success.size)
+                            insertDataIntoDb(success)
+                        } else {
+                            Log.d(TAG, "fetchDelivery success No data found")
+                        }
                     }
                     //since we are in bg thread now, post the result
                     networkState.postValue(NetworkState.SUCCESS)
-                    pref.setInt(NEXT_OFFSET_COUNT, 0)
                 }
             },
                 { error ->
@@ -171,5 +146,23 @@ class DeliveryRepository(
                 },
                 {})
         return networkState
+    }
+
+    /**
+     * Inserts the response into the database
+     *
+     * mapIndexed() Refrence:- https://www.geeksforgeeks.org/kotlin-collection-transformation/
+     */
+    private fun insertDataIntoDb(data: List<DeliveryResponseModel>) {
+        db.runInTransaction {
+            val start = db.getDeliveryDao().getNextIndexInDelivery()
+            val items = data.mapIndexed { index, deliveryItem ->
+                //Log.d("DEBUG", "Repo:-  start:-  $start  index:- $index")
+                //for indexing rows of table
+                deliveryItem.indexInResonse = start + index
+                deliveryItem
+            }
+            db.getDeliveryDao().insertAll(items)
+        }
     }
 }

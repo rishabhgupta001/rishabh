@@ -2,12 +2,11 @@ package com.example.delieverydemo.application
 
 import android.app.Application
 import com.example.delieverydemo.data.db.AppDatabase
-import com.example.delieverydemo.data.db.DeliveryBoundaryCallback2
 import com.example.delieverydemo.data.network.ApiService
 import com.example.delieverydemo.data.network.NetworkConnectionInterceptor
 import com.example.delieverydemo.data.preference.Pref
 import com.example.delieverydemo.data.repositories.DeliveryRepository
-import com.example.delieverydemo.delivery.viewmodelfactory.DeliveryViewModelFactory
+import com.example.delieverydemo.ui.delivery.viewmodelfactory.DeliveryViewModelFactory
 import com.example.delieverydemo.utils.AppExecutor
 import org.kodein.di.Kodein
 import org.kodein.di.KodeinAware
@@ -54,7 +53,6 @@ class MyApplication : Application(), KodeinAware {
                 instance(),
                 instance(),
                 instance(),
-                instance(),
                 instance()
             )
         }
@@ -64,13 +62,13 @@ class MyApplication : Application(), KodeinAware {
 
         bind() from provider { DeliveryViewModelFactory(instance()) }
         //bind() from provider { DeliveryBoundaryCallback(instance(), instance()) }
-        bind() from provider {
+      /*  bind() from provider {
             DeliveryBoundaryCallback2(
                 instance(),
                 instance(),
                 instance(),
-                instance()
+                instance(), instance()
             )
-        }
+        }*/
     }
 }

@@ -1,4 +1,4 @@
-package com.example.delieverydemo.delivery.view.adapter
+package com.example.delieverydemo.ui.delivery.view.adapter
 
 import android.annotation.SuppressLint
 import android.os.Handler
@@ -15,8 +15,8 @@ import com.example.delieverydemo.data.network.NetworkState
 import com.example.delieverydemo.data.network.StatusCode
 import com.example.delieverydemo.databinding.ItemLayoutTransactionBinding
 import com.example.delieverydemo.databinding.NetworkItemBinding
-import com.example.delieverydemo.delivery.model.DeliveryResponseModel
-import com.example.delieverydemo.delivery.view.DeliveryFragmentDirections
+import com.example.delieverydemo.ui.delivery.model.DeliveryResponseModel
+import com.example.delieverydemo.ui.delivery.view.DeliveryFragmentDirections
 import com.example.delieverydemo.utils.Constants.TYPE_ITEM
 import com.example.delieverydemo.utils.Constants.TYPE_PROGRESS
 import com.example.delieverydemo.utils.Utils

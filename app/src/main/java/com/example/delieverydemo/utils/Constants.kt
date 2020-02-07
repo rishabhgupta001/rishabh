@@ -5,6 +5,8 @@ object Constants {
     const val LOADING_PAGE_SIZE = 20
     const val CURRENCY = "$"
     const val DECIMAL_PATTERN = "#.##"
+    const val DEFAULT_SUBDELIVERY = "android"
+    const val KEY_SUBDELIVERY = "subdelivery"
 
     //db
     const val DATA_BASE_NAME = "deliverydatabase.db"

@@ -86,7 +86,7 @@ class DeliveryFragment : Fragment(), KodeinAware {
         swipeRefresh.setColorSchemeColors(Color.RED, Color.RED, Color.RED, Color.RED)
         deliveries_recycler_view.layoutManager =
             LinearLayoutManager(context, RecyclerView.VERTICAL, false)
-        transactionAdapter = TransactionAdapter()
+        transactionAdapter = TransactionAdapter() { viewModel.retry() }
 
         //get Page List
         viewModel.post.observe(this, Observer { pagedList ->

@@ -18,17 +18,17 @@ import java.text.DecimalFormat
 @Parcelize
 @Entity(tableName = "delivery")
 data class DeliveryResponseModel(
-    val deliveryFee: String = "",
-    val goodsPicture: String = "",
+    val deliveryFee: String,
+    val goodsPicture: String,
     @PrimaryKey
-    val id: String = "",
-    val pickupTime: String = "",
-    val remarks: String = "",
-    val surcharge: String = "",
+    val id: String,
+    val pickupTime: String,
+    val remarks: String,
+    val surcharge: String,
     @Embedded
-    val route: Route? = null,
+    val route: Route,
     @Embedded
-    val sender: Sender? = null,
+    val sender: Sender,
     //not comoing from Api
     var isFavourite: Boolean = false,
     //not comoing from Api

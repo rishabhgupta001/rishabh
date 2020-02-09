@@ -7,6 +7,7 @@
     <string name="text_to">To:</string>
     <string name="text_make_sure_no_data_connection">Make sure you have an active data connection</string>
     <string name="text_something_went_wrong">Something went wrong</string>
+    <string name="retry">Retry</string>
 
 
     <!--Delivery Detail Screen-->

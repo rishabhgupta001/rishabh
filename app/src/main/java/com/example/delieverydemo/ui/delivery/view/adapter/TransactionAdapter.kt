@@ -1,58 +1,42 @@
 package com.example.delieverydemo.ui.delivery.view.adapter
 
-import android.annotation.SuppressLint
-import android.os.Handler
-import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import androidx.databinding.DataBindingUtil
-import androidx.navigation.Navigation
 import androidx.paging.PagedListAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.example.delieverydemo.R
 import com.example.delieverydemo.data.network.NetworkState
-import com.example.delieverydemo.data.network.StatusCode
-import com.example.delieverydemo.databinding.ItemLayoutTransactionBinding
-import com.example.delieverydemo.databinding.NetworkItemBinding
 import com.example.delieverydemo.ui.delivery.model.DeliveryResponseModel
-import com.example.delieverydemo.ui.delivery.view.DeliveryFragmentDirections
-import com.example.delieverydemo.utils.Constants.TYPE_ITEM
-import com.example.delieverydemo.utils.Constants.TYPE_PROGRESS
-import com.example.delieverydemo.utils.Utils
 
-class TransactionAdapter :
+class TransactionAdapter(private val retryCallback: () -> Unit) :
     PagedListAdapter<DeliveryResponseModel, RecyclerView.ViewHolder>(diff) {
     private var networkState: NetworkState? = null
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-
-        val inflater: LayoutInflater = LayoutInflater.from(parent.context)
-
-        return if (viewType == TYPE_PROGRESS) {
-            //item_network_state layout inflated
-            val binding = NetworkItemBinding.inflate(inflater, parent, false)
-            NetworkStateItemViewHolder(binding)
-
-        } else {
-            //notifications_item_layout layout inflated
-            val binding = DataBindingUtil.inflate<ItemLayoutTransactionBinding>(
-                inflater,
-                R.layout.item_layout_transaction,
-                parent,
-                false
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+        when (getItemViewType(position)) {
+            R.layout.item_layout_transaction -> (holder as DeliveryPostViewHolder).bind(
+                getItem(
+                    position
+                )
             )
-            TransactionViewHolder(binding)
+            R.layout.item_network_state -> (holder as NetworkSateItemViewHolder).bind(networkState)
         }
     }
 
 
-    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        if (holder is TransactionViewHolder) {
-            holder.bindItem(this.getItem(position)!!)
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+        return when (viewType) {
+            R.layout.item_layout_transaction -> DeliveryPostViewHolder.create(parent)
+            R.layout.item_network_state -> NetworkSateItemViewHolder.create(parent, retryCallback)
+            else -> throw IllegalStateException("unknow view type $viewType")
+        }
+    }
 
-        } else if (holder is NetworkStateItemViewHolder) {
-            holder.bind(networkState)
+    override fun getItemViewType(position: Int): Int {
+        return if (hasExtraRow() && position == itemCount - 1) {
+            R.layout.item_network_state
+        } else {
+            R.layout.item_layout_transaction
         }
     }
 
@@ -75,66 +59,9 @@ class TransactionAdapter :
         }
     }
 
-    inner class TransactionViewHolder(val binding: ItemLayoutTransactionBinding) :
-        RecyclerView.ViewHolder(binding.root) {
+    private fun hasExtraRow(): Boolean =
+        networkState != null && networkState != NetworkState.SUCCESS
 
-        init {
-            itemView.setOnClickListener {
-                itemView.isEnabled = false
-                Handler().postDelayed({
-                    itemView.isEnabled = true
-
-                    val action = DeliveryFragmentDirections.actionDeliveryDetail()
-                    action.deliveryResponseModel = getItem(adapterPosition)
-                    Navigation.findNavController(it).navigate(action)
-                }, 100)
-            }
-        }
-
-        @SuppressLint("SetTextI18n")
-        fun bindItem(
-            data: DeliveryResponseModel
-        ) {
-            binding.data = data
-            Utils.setImage(binding.productImageView, data.goodsPicture)
-        }
-    }
-
-
-    class NetworkStateItemViewHolder(var binding: NetworkItemBinding) :
-        RecyclerView.ViewHolder(binding.root) {
-
-        fun bind(networkState: NetworkState?) {
-            if (networkState != null && networkState.statusCode == StatusCode.START) {
-                binding.progressBarPaging.visibility = View.VISIBLE
-            } else {
-                //Status SUCCESS
-                binding.progressBarPaging.visibility = View.GONE
-            }
-
-            if (networkState != null && networkState.statusCode == StatusCode.ERROR) {
-                binding.errorMsg.visibility = View.VISIBLE
-                binding.errorMsg.text = networkState.msg
-            } else {
-                binding.errorMsg.visibility = View.GONE
-            }
-        }
-    }
-
-    private fun hasExtraRow(): Boolean {
-        return if (networkState != null && networkState !== NetworkState.SUCCESS)
-            true
-        else
-            false
-    }
-
-    override fun getItemViewType(position: Int): Int {
-        return if (hasExtraRow() && position == itemCount - 1) {
-            TYPE_PROGRESS
-        } else {
-            TYPE_ITEM
-        }
-    }
 
     fun setNetworkState(newNetworkState: NetworkState) {
         val previousState = this.networkState
@@ -152,4 +79,5 @@ class TransactionAdapter :
             notifyItemChanged(itemCount - 1)
         }
     }
+
 }

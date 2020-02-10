@@ -8,6 +8,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import com.bumptech.glide.Glide
 import com.example.delieverydemo.R
+import com.google.android.material.snackbar.Snackbar
 
 object Utils {
     /***
@@ -40,4 +41,22 @@ object Utils {
             .into(imageView)
     }
 
+    /**
+     * Method to show msg to user using Snackbar
+     */
+    fun showSnackBar(
+        view: View,
+        msg: String,
+        actionName: String,
+        onClickListener: View.OnClickListener
+    ) {
+        Snackbar.make(view, msg, Snackbar.LENGTH_LONG).also { snackbar ->
+            snackbar.setAction(actionName) {
+
+                onClickListener.onClick(it)
+            }
+        }.show()
+
+
+    }
 }

@@ -29,9 +29,9 @@ class NetworkSateItemViewHolder(
 
     fun bind(networkState: NetworkState?) {
         itemView.progressBar.visibility = isVisible(networkState?.statusCode == StatusCode.START)
-        itemView.retry_button.visibility = isVisible(networkState?.statusCode == StatusCode.ERROR)
+        /*itemView.retry_button.visibility = isVisible(networkState?.statusCode == StatusCode.ERROR)
         itemView.error_msg.visibility = isVisible(!networkState?.msg.isNullOrEmpty())
-        itemView.error_msg.text = networkState?.msg
+        itemView.error_msg.text = networkState?.msg*/
 
     }
 

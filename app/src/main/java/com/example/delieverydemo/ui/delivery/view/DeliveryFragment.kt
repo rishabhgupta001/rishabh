@@ -14,12 +14,14 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.delieverydemo.R
 import com.example.delieverydemo.data.network.NetworkState
+import com.example.delieverydemo.data.network.StatusCode
 import com.example.delieverydemo.databinding.FragmentDeliveryBinding
 import com.example.delieverydemo.ui.delivery.view.adapter.TransactionAdapter
 import com.example.delieverydemo.ui.delivery.viewmodel.DeliveryViewModel
 import com.example.delieverydemo.ui.delivery.viewmodelfactory.DeliveryViewModelFactory
 import com.example.delieverydemo.utils.Constants.DEFAULT_SUBDELIVERY
 import com.example.delieverydemo.utils.Constants.KEY_SUBDELIVERY
+import com.example.delieverydemo.utils.Utils
 import kotlinx.android.synthetic.main.fragment_delivery.*
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.x.kodein
@@ -106,6 +108,13 @@ class DeliveryFragment : Fragment(), KodeinAware {
         //get the Network state (on hitting api respone success,error an all..)
         viewModel.networkState.observe(this,
             Observer<NetworkState> { networkState ->
+                if (networkState.statusCode == StatusCode.ERROR) {
+                    Utils.showSnackBar(root_layout, networkState.msg!!, getString(R.string.retry), object : View.OnClickListener {
+                        override fun onClick(view: View?) {
+                            viewModel.retry()
+                        }
+                    })
+                }
                 //show loader inside adapter row via Network Status
                 transactionAdapter.setNetworkState(networkState!!)
             })
@@ -130,6 +139,5 @@ class DeliveryFragment : Fragment(), KodeinAware {
         super.onSaveInstanceState(outState)
         outState.putString(KEY_SUBDELIVERY, viewModel.getCurrentSubDelivery())
     }
-
 }
 

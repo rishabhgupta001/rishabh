@@ -7,7 +7,6 @@ import android.widget.Toast
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.example.delieverydemo.data.network.NetworkState
-import com.example.delieverydemo.data.network.StatusCode
 
 fun Context.toastShort(msg: String) {
     Toast.makeText(this, msg, Toast.LENGTH_SHORT).show()
@@ -43,7 +42,7 @@ fun PagingRequestHelper.createStatusLiveData(): LiveData<NetworkState> {
         when {
             report.hasRunning() -> liveData.postValue(NetworkState.START)
             report.hasError() -> liveData.postValue(
-                NetworkState(StatusCode.ERROR, getErrorMessage(report))
+                NetworkState.error(getErrorMessage(report))
             )
             else -> liveData.postValue(NetworkState.SUCCESS)
         }

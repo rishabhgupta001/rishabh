@@ -1,7 +1,6 @@
 package com.example.delieverydemo.utils
 
 import android.content.Context
-import android.net.ConnectivityManager
 import android.view.View
 import android.view.animation.AnimationUtils
 import android.widget.ImageView
@@ -19,16 +18,6 @@ object Utils {
         textView.visibility = View.VISIBLE
         textView.text = msg
         textView.startAnimation(animFadeIn)
-    }
-
-    /**
-     * returns true if Internet is connected
-     */
-    fun isNetworkAvailable(context: Context?): Boolean {
-        val connectivityManager =
-            context?.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager?
-        val activeNetworkInfo = connectivityManager?.activeNetworkInfo
-        return activeNetworkInfo != null && activeNetworkInfo.isConnected
     }
 
     /**

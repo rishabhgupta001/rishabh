@@ -88,7 +88,7 @@ class DeliveryFragment : Fragment(), KodeinAware {
         swipeRefresh.setColorSchemeColors(Color.RED, Color.RED, Color.RED, Color.RED)
         deliveries_recycler_view.layoutManager =
             LinearLayoutManager(context, RecyclerView.VERTICAL, false)
-        transactionAdapter = TransactionAdapter() { viewModel.retry() }
+        transactionAdapter = TransactionAdapter { viewModel.retry() }
 
         //get Page List
         viewModel.post.observe(this, Observer { pagedList ->
@@ -101,6 +101,7 @@ class DeliveryFragment : Fragment(), KodeinAware {
         })
     }
 
+
     /**
      * Method to observe status of data loading from web services
      */
@@ -109,11 +110,8 @@ class DeliveryFragment : Fragment(), KodeinAware {
         viewModel.networkState.observe(this,
             Observer<NetworkState> { networkState ->
                 if (networkState.statusCode == StatusCode.ERROR) {
-                    Utils.showSnackBar(root_layout, networkState.msg!!, getString(R.string.retry), object : View.OnClickListener {
-                        override fun onClick(view: View?) {
-                            viewModel.retry()
-                        }
-                    })
+                    Utils.showSnackBar(root_layout, networkState.msg!!, getString(R.string.retry),
+                        View.OnClickListener { viewModel.retry() })
                 }
                 //show loader inside adapter row via Network Status
                 transactionAdapter.setNetworkState(networkState!!)
@@ -121,6 +119,7 @@ class DeliveryFragment : Fragment(), KodeinAware {
 
         deliveries_recycler_view.adapter = transactionAdapter
     }
+
 
     /**
      * Method to handle pull to refresh functionality

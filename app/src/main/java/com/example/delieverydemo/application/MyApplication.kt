@@ -30,16 +30,6 @@ import org.kodein.di.generic.singleton
  * */
 
 class MyApplication : Application(), KodeinAware {
-    companion object {
-        lateinit var mInstance: MyApplication
-    }
-
-    override fun onCreate() {
-        super.onCreate()
-        //creating instance of MyApplication class
-        mInstance = this
-    }
-
 
     override val kodein = Kodein.lazy {
         import(androidXModule(this@MyApplication))
@@ -62,13 +52,13 @@ class MyApplication : Application(), KodeinAware {
 
         bind() from provider { DeliveryViewModelFactory(instance()) }
         //bind() from provider { DeliveryBoundaryCallback(instance(), instance()) }
-      /*  bind() from provider {
-            DeliveryBoundaryCallback2(
-                instance(),
-                instance(),
-                instance(),
-                instance(), instance()
-            )
-        }*/
+        /*  bind() from provider {
+              DeliveryBoundaryCallback2(
+                  instance(),
+                  instance(),
+                  instance(),
+                  instance(), instance()
+              )
+          }*/
     }
 }

@@ -20,11 +20,11 @@ import com.example.delieverydemo.ui.delivery.model.DeliveryResponseModel
  *
  * */
 
-class DeliveryViewModel(val repository: DeliveryRepository) : ViewModel() {
+class DeliveryViewModel(private val repository: DeliveryRepository) : ViewModel() {
 
-    val subDeliveryName = MutableLiveData<String>()
+    private val subDeliveryName = MutableLiveData<String>()
     //map:- everytime the value of subDelivery changes, repoResult will be updated too. (Here)
-    val repoResult = Transformations.map(subDeliveryName, { _ -> repository.postOfDelivery() })
+    private val repoResult = Transformations.map(subDeliveryName) { repository.postOfDelivery() }
 
     /**
      * SwitchMap:- everytime the value of repoResult changes, it.pagedList will be called,
@@ -33,9 +33,9 @@ class DeliveryViewModel(val repository: DeliveryRepository) : ViewModel() {
      * will change too. So the value of post will depend on changes of repoResult and changes of
      * the value of it.pagedList.
      */
-    val post = Transformations.switchMap(repoResult, { it.pagedList })
-    val networkState = Transformations.switchMap(repoResult, { it.networkState })
-    val refreshState = Transformations.switchMap(repoResult, { it.refreshState })
+    val post = Transformations.switchMap(repoResult) { it.pagedList }
+    val networkState = Transformations.switchMap(repoResult) { it.networkState }
+    val refreshState = Transformations.switchMap(repoResult) { it.refreshState }
 
     /**
      * On Pull to Refresh from Ui
@@ -60,11 +60,11 @@ class DeliveryViewModel(val repository: DeliveryRepository) : ViewModel() {
     }
 
     fun showSubdelivery(subDelivery: String): Boolean {
-        if (subDeliveryName.value == subDelivery)
-            return false
+        return if (subDeliveryName.value == subDelivery)
+            false
         else {
             subDeliveryName.value = subDelivery
-            return true
+            true
         }
     }
 

@@ -98,7 +98,7 @@ class DeliveryBoundaryCallback(
         helperCallback: PagingRequestHelper.Request.Callback,
         data: List<DeliveryResponseModel>
     ) {
-        if (data.size > 0) {
+        if (data.isNotEmpty()) {
             Log.d(TAG, "fetchDelivery success loading")
             pref.setInt(NEXT_OFFSET_COUNT, pref.getInt(NEXT_OFFSET_COUNT) + data.size)
 

@@ -32,10 +32,9 @@ class NetworkSateItemViewHolder(
         /*itemView.retry_button.visibility = isVisible(networkState?.statusCode == StatusCode.ERROR)
         itemView.error_msg.visibility = isVisible(!networkState?.msg.isNullOrEmpty())
         itemView.error_msg.text = networkState?.msg*/
-
     }
 
-    fun isVisible(constraint: Boolean): Int = if (constraint) View.VISIBLE else View.GONE
+    private fun isVisible(constraint: Boolean): Int = if (constraint) View.VISIBLE else View.GONE
 
 
     companion object {

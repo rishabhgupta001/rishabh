@@ -80,8 +80,7 @@ class DeliveryRepository(
 
 
         val refreshTrigger = MutableLiveData<Any>()
-        val refreshState = Transformations.switchMap(refreshTrigger, { _ -> refresh() }
-        )
+        val refreshState = Transformations.switchMap(refreshTrigger) { refresh() }
 
 
         /**
@@ -128,7 +127,7 @@ class DeliveryRepository(
                     db.runInTransaction {
                         db.getDeliveryDao().deleteAllMovies()
                         // db.getDeliveryDao().insertAll(success)
-                        if (success.size > 0) {
+                        if (success.isNotEmpty()) {
                             pref.setInt(NEXT_OFFSET_COUNT, success.size)
                             insertDataIntoDb(success)
                         } else {
